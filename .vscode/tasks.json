@@ -1,0 +1,23 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "deploy to rc server",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "rc-apps",
+            "args": [
+                "deploy",
+                "-p=123",
+                "-u=hans",
+                "--update",
+                "--url=http://localhost:3000"
+            ]
+        }
+    ]
+}

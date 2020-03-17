@@ -1,0 +1,15 @@
+{
+    "id": "abde3cd2-cc7e-4a70-9b4d-4f0006f75499",
+    "version": "0.1.0",
+    "requiredApiVersion": "^1.4.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "Andreas Pazureck",
+        "homepage": "www.github.com/apazureck",
+        "support": "www.github.com/apazureck/rocket.chat-jira-link"
+    },
+    "name": "Jira-Link",
+    "nameSlug": "jira-link",
+    "classFile": "JiraLinkApp.ts",
+    "description": "Creates links to Jira issues if they are found on the given Jira Server"
+}
