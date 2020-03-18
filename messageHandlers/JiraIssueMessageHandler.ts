@@ -6,14 +6,13 @@ import {
     IRead,
     ISettingRead
 } from "@rocket.chat/apps-engine/definition/accessors";
-import {
-    IMessage,
-} from "@rocket.chat/apps-engine/definition/messages";
+import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 import {
     settingJiraPassword,
     settingJiraServerAddress,
     settingJiraUserName,
-    settingRegex
+    settingRegex,
+    settingAddAttachments,
 } from "../configuration/configuration";
 import { JiraIssuer } from "../jiraConnection/issuer";
 import { createAttachment, IFoundIssue } from "./attachments";
@@ -47,7 +46,9 @@ export class JiraIssueMessageHandler {
             await settings.getValueById(settingJiraServerAddress)
         );
 
-        await this.createAttachmentLinks(foundIssues, builder);
+        if (await settings.getValueById(settingAddAttachments) === true) {
+            await this.createAttachmentLinks(foundIssues, builder);
+        }
 
         return builder.getMessage();
     }

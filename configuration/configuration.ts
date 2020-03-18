@@ -8,50 +8,74 @@ export const settingJiraServerAddress = "jira-link-server-address";
 export const settingJiraUserName = "jira-link-username";
 export const settingJiraPassword = "jira-link-password";
 export const settingRegex = "jira-link-regex";
+export const settingAddAttachments = "jira-link-add-attachments";
+
+const sectionConnection = "Connection Settings";
+const sectionAttachments = "Attachments";
 
 export function extendConfiguration(
     configuration: IConfigurationExtend,
     environmentRead: IEnvironmentRead
 ): void {
+    /// Server Settings
     configuration.settings.provideSetting({
+        section: sectionConnection,
         id: settingJiraServerAddress,
-        packageValue: "http://localhost:5000",
+        packageValue: "",
         public: false,
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: "jira_link_server_address_label",
-        i18nDescription: "jira_link_server_address_description"
+        i18nLabel: settingJiraServerAddress + "-label",
+        i18nDescription: settingJiraServerAddress + "-description",
+        i18nPlaceholder: "http://localhost:5000"
     });
     configuration.settings.provideSetting({
+        section: sectionConnection,
         id: settingJiraUserName,
-        packageValue: "<your-jira-user>",
+        packageValue: "",
         public: false,
         type: SettingType.STRING,
         multiline: false,
         required: true,
         i18nLabel: settingJiraUserName + "-label",
-        i18nDescription: settingJiraUserName + "-description"
+        i18nDescription: settingJiraUserName + "-description",
+        i18nPlaceholder: "John Doe"
     });
     configuration.settings.provideSetting({
+        section: sectionConnection,
         id: settingJiraPassword,
-        packageValue: "***",
+        packageValue: "",
         public: false,
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: "Password",
-        i18nDescription: "The password of the user."
+        i18nLabel: settingJiraPassword + "-label",
+        i18nDescription: settingJiraPassword + "-description",
+        i18nPlaceholder: "****"
     });
+
+    /// Regular Expression
     configuration.settings.provideSetting({
         id: settingRegex,
         packageValue: "\\b\\w+-\\d+\\b",
         public: false,
         type: SettingType.CODE,
-        multiline: true,
+        multiline: false,
         required: true,
-        i18nLabel: "Jira Issue Regex",
-        i18nDescription:
-            "A javascript regular expression to identify potential JIRA issue candidates in text messages.\nTo use multiple expression put one expression in each line. If first expression will not find anything, next expression is used."
+        i18nLabel: settingRegex + "-label",
+        i18nDescription: settingRegex + "-description"
+    });
+
+    // Attachment Settings
+    configuration.settings.provideSetting({
+        id: settingAddAttachments,
+        section: sectionAttachments,
+        packageValue: true,
+        public: false,
+        type: SettingType.BOOLEAN,
+        required: true,
+        i18nLabel: settingAddAttachments + "-label",
+        i18nDescription: settingAddAttachments + "-description"
     });
 }

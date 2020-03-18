@@ -47,19 +47,6 @@ export class SearchIssueCommand implements ISlashCommand {
         persis: IPersistence
     ): Promise<ISlashCommandPreview> {
         const logger = this.log.getLogger();
-        // return {
-        //     i18nTitle: "Test",
-        //     items: [{
-        //         id: "Test1",
-        //         type: SlashCommandPreviewItemType.TEXT,
-        //         value: JSON.stringify(this.app.getLogger())
-        //     },
-        //     {
-        //         id: "Test2",
-        //         type: SlashCommandPreviewItemType.TEXT,
-        //         value: "Test Value"
-        //     }]
-        // };
         try {
             logger.log("Searching Issues...");
             const settings = read.getEnvironmentReader().getSettings();
@@ -86,7 +73,7 @@ export class SearchIssueCommand implements ISlashCommand {
                     return {
                         id: i.key,
                         type: SlashCommandPreviewItemType.TEXT,
-                        value: i.key + ": " + i.fields.summary
+                        value: `[${i.key}]\n${i.fields.summary}`
                     } as ISlashCommandPreviewItem;
                 })
             };
@@ -104,6 +91,19 @@ export class SearchIssueCommand implements ISlashCommand {
         http: IHttp,
         persis: IPersistence
     ): Promise<void> {
-        throw new Error("Method not implemented.");
+        const logger = this.log.getLogger();
+        try {
+            logger.debug("Creating message for", item);
+            const newMessage = modify.getCreator().startMessage();
+            newMessage
+                .setSender(context.getSender())
+                .setRoom(context.getRoom())
+                .setThreadId(context.getThreadId() as string);
+
+            newMessage.setText(item.id);
+            modify.getCreator().finish(newMessage);
+        } catch (error) {
+            logger.error("Failed creating message", error);
+        }
     }
 }

@@ -13,7 +13,8 @@ import {
     settingJiraPassword,
     settingJiraServerAddress,
     settingJiraUserName,
-    settingRegex
+    settingRegex,
+    settingAddAttachments
 } from "../configuration/configuration";
 import { JiraIssuer } from "../jiraConnection/issuer";
 import { createAttachment, IFoundIssue } from "./attachments";
@@ -52,7 +53,9 @@ export class JiraIssueMessageUpdater {
         await this.createIssueLinks(foundIssues, builder, serverAddress);
 
         this.clearAttachments(builder);
-        this.createAttachments(foundIssues, builder);
+        if ((await settings.getValueById(settingAddAttachments)) === true) {
+            this.createAttachments(foundIssues, builder);
+        }
 
         builder.setParseUrls(false);
         return builder.getMessage();
