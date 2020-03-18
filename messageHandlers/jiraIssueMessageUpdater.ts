@@ -10,11 +10,11 @@ import {
     IMessageAttachment
 } from "@rocket.chat/apps-engine/definition/messages";
 import {
+    settingAddAttachments,
     settingJiraPassword,
     settingJiraServerAddress,
     settingJiraUserName,
-    settingRegex,
-    settingAddAttachments
+    settingRegex
 } from "../configuration/configuration";
 import { JiraIssuer } from "../jiraConnection/issuer";
 import { createAttachment, IFoundIssue } from "./attachments";
