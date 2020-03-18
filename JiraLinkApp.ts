@@ -6,7 +6,7 @@ import {
     ILogger,
     IMessageBuilder,
     IPersistence,
-    IRead
+    IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { App } from "@rocket.chat/apps-engine/definition/App";
 import {
@@ -15,12 +15,14 @@ import {
     IPreMessageUpdatedModify
 } from "@rocket.chat/apps-engine/definition/messages";
 import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
+import { SearchIssueCommand } from "./commands/searchIssueCommand";
 import { extendConfiguration } from "./configuration/configuration";
 import { JiraIssueMessageHandler } from "./messageHandlers/JiraIssueMessageHandler";
 import { JiraIssueMessageUpdater } from "./messageHandlers/jiraIssueMessageUpdater";
+import {ILogProvider} from "./types/ilogprovider";
 
 export class JiraLinkApp extends App
-    implements IPreMessageSentModify, IPreMessageUpdatedModify {
+    implements IPreMessageSentModify, IPreMessageUpdatedModify, ILogProvider {
     constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
         super(info, logger, accessors);
     }
@@ -48,6 +50,7 @@ export class JiraLinkApp extends App
         environmentRead: IEnvironmentRead
     ): Promise<void> {
         await this.extendConfiguration(configurationExtend, environmentRead);
+        await configurationExtend.slashCommands.provideSlashCommand(new SearchIssueCommand(this));
         this.getLogger().log("Jira Link started");
     }
 

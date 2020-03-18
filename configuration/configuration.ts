@@ -20,8 +20,8 @@ export function extendConfiguration(
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: "Server Address",
-        i18nDescription: "The Address of your JIRA Server"
+        i18nLabel: "jira_link_server_address_label",
+        i18nDescription: "jira_link_server_address_description"
     });
     configuration.settings.provideSetting({
         id: settingJiraUserName,
@@ -30,9 +30,8 @@ export function extendConfiguration(
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: "Username",
-        i18nDescription:
-            "The username of your user that will peek for the links. This user has to have read rights to all projects on your server."
+        i18nLabel: settingJiraUserName + "-label",
+        i18nDescription: settingJiraUserName + "-description"
     });
     configuration.settings.provideSetting({
         id: settingJiraPassword,

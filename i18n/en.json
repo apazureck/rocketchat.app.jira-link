@@ -1,0 +1,8 @@
+{
+    "jira-link-searchIssue-example": "",
+    "jira-link-searchIssue-description": "",
+    "jira_link_server_address_label": "Jira Server Address",
+    "jira_link_server_address_description": "The Address of your JIRA Server",
+    "jira-link-username-label": "Username",
+    "jira-link-username-description": "The username of your user that will peek for the links. This user has to have read rights to all projects on your server."
+}

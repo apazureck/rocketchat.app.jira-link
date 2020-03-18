@@ -1,4 +1,9 @@
-import { IHttp, ILogger } from "@rocket.chat/apps-engine/definition/accessors";
+import {
+    IHttp,
+    IHttpRequest,
+    IHttpResponse,
+    ILogger
+} from "@rocket.chat/apps-engine/definition/accessors";
 
 let sessionCookie: string;
 
@@ -31,6 +36,14 @@ export interface IJiraIssue {
     jiraLinkAddress: string;
 }
 
+export interface ISearchResult {
+    expand: string;
+    startAt: number;
+    maxResults: number;
+    total: number;
+    issues: Array<IJiraIssue>;
+}
+
 export class JiraIssuer {
     constructor(
         private jira: IJiraAccess,
@@ -42,26 +55,8 @@ export class JiraIssuer {
         const issueUrl = this.jira.serverUrl + "/rest/api/2/issue/" + issueName;
         this.logger.debug("Requesting Jira Issue: " + issueUrl);
         this.logger.debug("Using session cookie: " + sessionCookie);
-        let response = await this.http.get(issueUrl, {
-            headers: {
-                cookie: sessionCookie
-            }
-        });
 
-        this.logger.debug(
-            "JIRA Server returned HTTP Status " + response.statusCode
-        );
-
-        if (response.statusCode === 401) {
-            this.logger.debug("Unauthorized, trying to log in");
-            await this.login();
-            this.logger.debug("Using session cookie: " + sessionCookie);
-            response = await this.http.get(issueUrl, {
-                headers: {
-                    cookie: sessionCookie
-                }
-            });
-        }
+        const response = await this.request(issueUrl);
 
         if (response.statusCode === 404) {
             this.logger.debug("Issue was not found on server");
@@ -74,6 +69,48 @@ export class JiraIssuer {
         );
         response.data.jiraLinkAddress = issueUrl;
         return response.data;
+    }
+
+    public async searchIssue(searchString: string): Promise<ISearchResult> {
+        const queryUrl =
+            this.jira.serverUrl +
+            `/rest/api/2/search?jql=text~'${searchString}'`;
+        this.logger.debug("Seraching Issue query", queryUrl);
+        const response = await this.request(queryUrl);
+
+        return response.data;
+    }
+
+    private async request(url: string): Promise<IHttpResponse> {
+        if (!sessionCookie) {
+            await this.login();
+        }
+
+        this.logger.debug("Used session cookie", sessionCookie);
+
+        let response = await this.http.get(url, {
+            headers: {
+                cookie: sessionCookie
+            }
+        });
+
+        this.logger.debug(
+            "JIRA Server returned HTTP Status",
+            response.statusCode
+        );
+
+        if (response.statusCode === 401) {
+            this.logger.debug("Unauthorized, trying to log in");
+            await this.login();
+            this.logger.debug("Using session cookie: " + sessionCookie);
+            response = await this.http.get(url, {
+                headers: {
+                    cookie: sessionCookie
+                }
+            });
+        }
+        this.logger.debug("Received Response", response);
+        return response;
     }
 
     private async login(): Promise<void> {
