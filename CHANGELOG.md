@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Search for issues on the server
 * i18n Labels for settings
 * Setting to deactivate attachments (default is activated)
+* German i18n language file
 
 ## [0.1.0] - 2020-03-17
 

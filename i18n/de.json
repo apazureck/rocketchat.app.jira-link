@@ -1,0 +1,14 @@
+{
+    "jira-link-searchIssue-example": "",
+    "jira-link-searchIssue-description": "",
+    "jira-link-server-address-label": "Jira Server Addresse",
+    "jira-link-server-address-description": "Die Addresse Ihres Jira Servers",
+    "jira-link-username-label": "Benutzername",
+    "jira-link-username-description": "Der Benutzer über den die Issues gesucht werden sollen. Dieser Benutzer sollte Leserechte auf alle Projekte haben",
+    "jira-link-password-label": "Passwort",
+    "jira-link-password-description": "Das Passwort des Benutzers",
+    "jira-link-regex-label": "Jira Issue Regex",
+    "jira-link-regex-description": "Regulärer Ausdruck, welcher genutzt wird um Issues im Nachrichtentext zu erkennen.\nDefault: PROJEKTID-###. Zum Beispiel MYPRJ-123 PRJ-80",
+    "jira-link-add-attachments-label": "Anhänge hinzufügen",
+    "jira-link-add-attachments-description": "Fügt einen Anhang mit Issue-Details an die Nachricht an"
+}
