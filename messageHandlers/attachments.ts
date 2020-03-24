@@ -30,7 +30,7 @@ export interface IFoundIssue {
 export function createAttachment(i: IFoundIssue): IMessageAttachment {
     {
         return {
-            text: `**${i.issue.key}** [${i.issue.fields.summary}](${i.issue.jiraLinkAddress}) - ${i.issue.fields.status.name}`,
+            text: `**${i.issue.key}** [${i.issue.fields.summary}](${i.issue.jiraLinkBrowseAddress}) - ${i.issue.fields.status.name}`,
             jlTag: i.issue.key,
             color: "cyan",
             thumbnailUrl: i.issue.fields.issuetype.iconUrl,

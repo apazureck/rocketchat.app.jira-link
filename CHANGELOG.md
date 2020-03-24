@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Do not add additional links when editing messages (this is maybe a bug in RocketChat)
+* Wrong Link is set in attachment
 
 ## [0.2.0] - 2020-03-18
 

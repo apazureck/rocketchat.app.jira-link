@@ -34,6 +34,14 @@ export interface IJiraIssue {
      * @memberof IJiraIssue
      */
     jiraLinkAddress: string;
+
+    /**
+     * This field is set by the issuer. This is the browse link to the server
+     *
+     * @type {string}
+     * @memberof IJiraIssue
+     */
+    jiraLinkBrowseAddress: string;
 }
 
 export interface ISearchResult {
@@ -68,6 +76,7 @@ export class JiraIssuer {
             response.data
         );
         response.data.jiraLinkAddress = issueUrl;
+        response.data.jiraLinkBrowseAddress = `${this.jira.serverUrl}/browse/${issueName}`;
         return response.data;
     }
 
