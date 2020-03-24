@@ -15,11 +15,11 @@ import {
     IPreMessageUpdatedModify
 } from "@rocket.chat/apps-engine/definition/messages";
 import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
-import { SearchIssueCommand } from "./commands/searchIssueCommand";
-import { extendConfiguration } from "./configuration/configuration";
-import { JiraIssueMessageHandler } from "./messageHandlers/JiraIssueMessageHandler";
-import { JiraIssueMessageUpdater } from "./messageHandlers/jiraIssueMessageUpdater";
-import {ILogProvider} from "./types/ilogprovider";
+import { SearchIssueCommand } from "./src/commands/searchIssueCommand";
+import { extendConfiguration } from "./src/configuration/configuration";
+import { JiraIssueMessageHandler } from "./src/messageHandlers/JiraIssueMessageHandler";
+import { JiraIssueMessageUpdater } from "./src/messageHandlers/jiraIssueMessageUpdater";
+import {ILogProvider} from "./src/types/ilogprovider";
 
 export class JiraLinkApp extends App
     implements IPreMessageSentModify, IPreMessageUpdatedModify, ILogProvider {

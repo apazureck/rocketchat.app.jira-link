@@ -42,6 +42,14 @@ export interface IJiraIssue {
      * @memberof IJiraIssue
      */
     jiraLinkBrowseAddress: string;
+
+    /**
+     * Server the issue was found on
+     *
+     * @type {string}
+     * @memberof IJiraIssue
+     */
+    jiraLinkServerUrl: string;
 }
 
 export interface ISearchResult {
@@ -77,6 +85,7 @@ export class JiraIssuer {
         );
         response.data.jiraLinkAddress = issueUrl;
         response.data.jiraLinkBrowseAddress = `${this.jira.serverUrl}/browse/${issueName}`;
+        response.data.jiraLinkServerUlr = this.jira.serverUrl;
         return response.data;
     }
 

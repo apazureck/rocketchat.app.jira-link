@@ -70,7 +70,7 @@ export class JiraIssueMessageHandler {
         for (const issue of foundIssues) {
             text = text.replace(
                 issue.issueId,
-                `[${issue.issue.key}](${issue.issue.jiraBrowseLink})`
+                `[${issue.issue.key}](${issue.issue.jiraLinkBrowseAddress})`
             );
         }
         messageBuilder.setText(text);
