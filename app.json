@@ -1,7 +1,7 @@
 {
     "id": "abde3cd2-cc7e-4a70-9b4d-4f0006f75499",
-    "version": "0.2.0",
-    "requiredApiVersion": "^1.4.0",
+    "version": "0.2.1",
+    "requiredApiVersion": "^1.6.0",
     "iconFile": "icon.png",
     "author": {
         "name": "Andreas Pazureck",
