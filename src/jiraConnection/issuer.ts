@@ -67,14 +67,14 @@ export class JiraIssuer {
         private logger: ILogger
     ) {}
 
-    public async getIssue(issueName: string): Promise<IJiraIssue | undefined> {
-        const issueUrl = this.jira.serverUrl + "/rest/api/2/issue/" + issueName;
+    public async getIssue(issueId: string): Promise<IJiraIssue | undefined> {
+        const issueUrl = this.jira.serverUrl + "/rest/api/2/issue/" + issueId;
         this.logger.debug("Requesting Jira Issue: " + issueUrl);
         this.logger.debug("Using session cookie: " + sessionCookie);
 
         const response = await this.request(issueUrl);
 
-        if (response.statusCode === 404) {
+        if (!this.isSuccessStatusCode(response.statusCode)) {
             this.logger.debug("Issue was not found on server");
             return undefined;
         }
@@ -83,8 +83,9 @@ export class JiraIssuer {
             "Found issue entry with the following data:",
             response.data
         );
+
         response.data.jiraLinkAddress = issueUrl;
-        response.data.jiraLinkBrowseAddress = `${this.jira.serverUrl}/browse/${issueName}`;
+        response.data.jiraLinkBrowseAddress = `${this.jira.serverUrl}/browse/${issueId}`;
         response.data.jiraLinkServerUlr = this.jira.serverUrl;
         return response.data;
     }
@@ -150,6 +151,15 @@ export class JiraIssuer {
             this.logger.debug(
                 "Setting session cookie: " + response.headers["set-cookie"]
             );
+        }
+    }
+
+    private isSuccessStatusCode(statusCode: number): boolean {
+        try {
+            return statusCode < 300;
+        } catch (error) {
+            this.logger.error(error);
+            return false;
         }
     }
 }

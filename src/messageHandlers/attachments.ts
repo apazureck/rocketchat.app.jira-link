@@ -1,4 +1,4 @@
-import { IMessageAttachment, MessageActionType } from "@rocket.chat/apps-engine/definition/messages";
+import { IMessageAttachment, MessageActionType, MessageActionButtonsAlignment, MessageProcessingType } from "@rocket.chat/apps-engine/definition/messages";
 import { IJiraIssue } from "../jiraConnection/issuer";
 
 export interface IFoundIssue {
@@ -40,13 +40,15 @@ export function createAttachment(i: IFoundIssue): IMessageAttachment {
             jlTag: i.issue.key,
             color: "cyan",
             thumbnailUrl: i.issue.fields.issuetype.iconUrl,
-            actions: [
-                {
-                    type: MessageActionType.BUTTON,
-                    text: "Vote",
-                    url: `${i.issue.jiraLinkServerUrl}/rest/api/2/issue/${i.issue.key}/votes`
-                }
-            ]
+            actionButtonsAlignment: MessageActionButtonsAlignment.HORIZONTAL,
+            // actions: [
+            //     {
+            //         type: MessageActionType.BUTTON,
+            //         text: "Vote",
+            //         msg_processing_type: MessageProcessingType.RespondWithMessage,
+            //         url: "http://google.com"
+            //     }
+            // ]
         } as IMessageAttachment;
     }
 }
