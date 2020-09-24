@@ -14,7 +14,8 @@ import {
     settingJiraUserName,
     settingRegex
 } from "../configuration/configuration";
-import { JiraIssuer } from "../jiraConnection/issuer";
+import { JiraConnection } from "../jiraConnection/jiraConnection";
+import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
 import { createAttachment, IFoundIssue } from "./attachments";
 
 export class JiraIssueMessageHandler {
@@ -88,16 +89,17 @@ export class JiraIssueMessageHandler {
             "gm"
         );
 
+        const jc = new JiraConnection(this.logger, http, {
+            serverUrl: await settings.getValueById(
+                settingJiraServerAddress
+            ),
+            password: await settings.getValueById(settingJiraPassword),
+            username: await settings.getValueById(settingJiraUserName)
+        });
+
         // Get a new issuer to find the issues on the jira server
-        const issuer = new JiraIssuer(
-            {
-                serverUrl: await settings.getValueById(
-                    settingJiraServerAddress
-                ),
-                password: await settings.getValueById(settingJiraPassword),
-                username: await settings.getValueById(settingJiraUserName)
-            },
-            http,
+        const issuer = new JiraIssueProvider(
+            jc,
             this.logger
         );
 

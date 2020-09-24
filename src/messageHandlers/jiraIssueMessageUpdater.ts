@@ -16,7 +16,8 @@ import {
     settingJiraUserName,
     settingRegex
 } from "../configuration/configuration";
-import { JiraIssuer } from "../jiraConnection/issuer";
+import { JiraConnection } from "../jiraConnection/jiraConnection";
+import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
 import { createAttachment, IFoundIssue } from "./attachments";
 
 export class JiraIssueMessageUpdater {
@@ -112,14 +113,16 @@ export class JiraIssueMessageUpdater {
         );
         const regex = new RegExp(regstring, "gm");
 
-        // Get a new issuer to find the issues on the jira server
-        const issuer = new JiraIssuer(
+        const jc = new JiraConnection(this.logger, http,
             {
                 serverUrl,
                 password,
                 username
-            },
-            http,
+            });
+
+        // Get a new issuer to find the issues on the jira server
+        const issuer = new JiraIssueProvider(
+            jc,
             this.logger
         );
 

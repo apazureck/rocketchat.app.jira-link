@@ -19,7 +19,8 @@ import {
     settingJiraUserName,
     settingRegex
 } from "../configuration/configuration";
-import { JiraIssuer } from "../jiraConnection/issuer";
+import { JiraConnection } from "../jiraConnection/jiraConnection";
+import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
 import { ILogProvider } from "../types/ilogprovider";
 
 export class SearchIssueCommand implements ISlashCommand {
@@ -51,15 +52,16 @@ export class SearchIssueCommand implements ISlashCommand {
             logger.log("Searching Issues...");
             const settings = read.getEnvironmentReader().getSettings();
 
-            const search = new JiraIssuer(
-                {
-                    serverUrl: await settings.getValueById(
-                        settingJiraServerAddress
-                    ),
-                    password: await settings.getValueById(settingJiraPassword),
-                    username: await settings.getValueById(settingJiraUserName)
-                },
-                http,
+            const jc = new JiraConnection(logger, http, {
+                serverUrl: await settings.getValueById(
+                    settingJiraServerAddress
+                ),
+                password: await settings.getValueById(settingJiraPassword),
+                username: await settings.getValueById(settingJiraUserName)
+            });
+
+            const search = new JiraIssueProvider(
+                jc,
                 logger
             );
 

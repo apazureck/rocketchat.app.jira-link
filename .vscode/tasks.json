@@ -18,6 +18,19 @@
                 "--update",
                 "--url=http://localhost:3000"
             ]
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "testtsconfig.json",
+            "option": "watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "label": "tsc: watch - tsconfig.json, no output"
         }
     ]
 }

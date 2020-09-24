@@ -2,7 +2,6 @@ version: '2'
 
 services:
   rocketchat:
-    container_name: rocketchat
     image: rocketchat/rocket.chat:latest
     command: >
       bash -c
@@ -14,7 +13,7 @@ services:
         done; (exit $$s)"
     restart: unless-stopped
     volumes:
-      - ./uploads:/app/uploads
+      - ./uploads:/data/app/uploads
     environment:
       - PORT=3000
       - ROOT_URL=http://localhost:3000
@@ -32,11 +31,10 @@ services:
       - "traefik.frontend.rule=Host: your.domain.tld"
 
   mongo:
-    container_name: mongo
     image: mongo:4.0
     restart: unless-stopped
-    # volumes:
-    #  - //c/data/db:/data/db
+    volumes:
+     - ./data/db:/data/db
      #- ./data/dump:/dump
     command: mongod --smallfiles --oplogSize 128 --replSet rs0 --storageEngine=mmapv1
     labels:
@@ -45,7 +43,6 @@ services:
   # this container's job is just run the command to initialize the replica set.
   # it will run the command and remove himself (it will not stay running)
   mongo-init-replica:
-    container_name: rcinit
     image: mongo:4.0
     command: >
       bash -c

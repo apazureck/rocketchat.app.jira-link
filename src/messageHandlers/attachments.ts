@@ -1,14 +1,14 @@
-import { IMessageAttachment, MessageActionType, MessageActionButtonsAlignment, MessageProcessingType } from "@rocket.chat/apps-engine/definition/messages";
-import { IJiraIssue } from "../jiraConnection/issuer";
+import { IMessageAttachment, MessageActionButtonsAlignment, MessageProcessingType } from "@rocket.chat/apps-engine/definition/messages";
+import { IJiraIssueBase } from "../jiraConnection/jiraIssueProvider";
 
 export interface IFoundIssue {
     /**
      * The issue found on the JIRA server
      *
-     * @type {IJiraIssue}
+     * @type {IJiraIssueBase}
      * @memberof IFoundIssue
      */
-    issue: IJiraIssue;
+    issue: IJiraIssueBase;
 
     /**
      * The found match of the search regex
