@@ -1,16 +1,26 @@
 {
-    "version": "0.2.1",
-    "devDependencies": {
-        "@rocket.chat/apps-engine": "^1.15.0",
-        "@types/chai": "^4.2.12",
-        "@types/mocha": "^8.0.3",
-        "@types/node": "^10.17.26",
-        "chai": "^4.2.0",
-        "mocha": "^8.1.3",
-        "ts-mockito": "^2.6.1",
-        "ts-node": "^9.0.0",
-        "tslint": "^5.10.0",
-        "typemoq": "^2.1.0",
-        "typescript": "^2.9.1"
-    }
+  "version": "0.2.1",
+  "scripts": {
+    "mochista": "mochista --report lcov -w --require ts-node/register --timeout 2500 --all --testFile test/**/*.test.{ts,tsx} --extensions .ts .tsx --exclude **/*.d.ts",
+    "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
+    "coverage-watch": "nodemon --watch src --watch test -e ts --exec npm run coverage ",
+    "coverage": "nyc npm run test",
+    "jest": "jest"
+  },
+  "devDependencies": {
+    "@rocket.chat/apps-engine": "^1.15.0",
+    "@types/chai": "^4.2.12",
+    "@types/jest": "^26.0.14",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^10.17.26",
+    "chai": "^4.2.0",
+    "mocha": "^8.1.3",
+    "ts-node": "^9.0.0",
+    "tslint": "^5.10.0",
+    "typemoq": "^2.1.0",
+    "typescript": "^2.9.1"
+  },
+  "dependencies": {
+    "jest": "^26.4.2"
+  }
 }

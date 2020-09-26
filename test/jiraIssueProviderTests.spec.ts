@@ -44,4 +44,21 @@ describe("Jira Issue Provider Tests", () => {
 
         expect(result.key).to.equal(issueId);
     });
+
+    it("Found Issue should be returned", async () => {
+        // Arrange
+
+        const searchString = "test";
+
+        const logger = Mock.ofType<ILogger>();
+        const jiraConnectionMock = Mock.ofType<JiraConnection>();
+
+        const cut = new JiraIssueProvider(jiraConnectionMock.object, logger.object);
+
+        // Act
+
+        const result = await cut.searchIssue(searchString);
+
+        expect(result.issues.length).to.be.equal(1);
+    });
 });
