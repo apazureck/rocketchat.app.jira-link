@@ -22,3 +22,7 @@ jobs:
       run: npm run coverage
     - name: Create Code Coverage Report
       uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./coverage
+        fail_ci_if_error: true
