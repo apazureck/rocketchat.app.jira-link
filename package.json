@@ -1,11 +1,8 @@
 {
   "version": "0.2.1",
   "scripts": {
-    "mochista": "mochista --report lcov -w --require ts-node/register --timeout 2500 --all --testFile test/**/*.test.{ts,tsx} --extensions .ts .tsx --exclude **/*.d.ts",
     "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
-    "coverage-watch": "nodemon --watch src --watch test -e ts --exec npm run coverage ",
-    "coverage": "nyc npm run test",
-    "jest": "jest"
+    "coverage": "nyc npm run test"
   },
   "devDependencies": {
     "@rocket.chat/apps-engine": "^1.15.0",
@@ -21,6 +18,9 @@
     "typescript": "^2.9.1"
   },
   "dependencies": {
-    "jest": "^26.4.2"
+    "cross-env": "^7.0.2",
+    "istanbul": "^0.4.5",
+    "nodemon": "^2.0.4",
+    "ts-node": "^9.0.0"
   }
 }
