@@ -5,7 +5,7 @@ import { Mock } from "typemoq";
 // tslint:disable:no-unused-expression
 
 import { JiraConnection } from "../src/jiraConnection/jiraConnection";
-import { IJiraIssue, ISSUE_URL_PREFIX, JiraIssueProvider } from "../src/jiraConnection/jiraIssueProvider";
+import { IJiraIssue, ISearchResult, ISSUE_URL_PREFIX, JiraIssueProvider } from "../src/jiraConnection/jiraIssueProvider";
 
 describe("Jira Issue Provider Tests", () => {
     it("Failed request should return undefined", async () => {
@@ -52,6 +52,9 @@ describe("Jira Issue Provider Tests", () => {
 
         const logger = Mock.ofType<ILogger>();
         const jiraConnectionMock = Mock.ofType<JiraConnection>();
+        jiraConnectionMock.setup(jc => jc.request(`/rest/api/2/search?jql=text~'${searchString}'`)).returns(async () => {
+            return { issues: [ { } ] as Array<IJiraIssue> } as ISearchResult;
+        });
 
         const cut = new JiraIssueProvider(jiraConnectionMock.object, logger.object);
 
