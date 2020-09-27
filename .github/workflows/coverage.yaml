@@ -1,18 +1,24 @@
 name: Coverage
 
-on: push
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
 
 jobs:
+  test:
     name: Calculate Code Coverage
     runs-on: ubuntu-latest
 
     steps:
-        - name: Checkout Code
-          uses: actions/checkout@master
-
-        - name: Run nyc Task
-          run: npm i
-          run: npm run coverage
-
-        - name: Create Code Coverage Report
-          uses: codecov/codecov-action@v1
+    - name: Checkout Code
+      uses: actions/checkout@master
+    - name: npm install
+      run: npm i
+    - name: Run Code Coverage
+      run: npm run coverage
+    - name: Create Code Coverage Report
+      uses: codecov/codecov-action@v1
