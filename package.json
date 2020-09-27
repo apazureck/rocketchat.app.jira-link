@@ -2,7 +2,7 @@
   "version": "0.2.1",
   "scripts": {
     "test": "cross-env TS_NODE_FILES=true mocha --exit --require ts-node/register --colors test/**/*.ts",
-    "coverage": "nyc --reporter=lcov --reporter=json npm run test"
+    "coverage": "nyc --reporter=json --reporter=html npm run test"
   },
   "devDependencies": {
     "@rocket.chat/apps-engine": "^1.15.0",
@@ -26,5 +26,18 @@
     "nodemon": "^2.0.4",
     "nyc": "^15.1.0",
     "ts-node": "^9.0.0"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }
