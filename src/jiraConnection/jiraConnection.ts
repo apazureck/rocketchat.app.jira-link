@@ -4,8 +4,6 @@ import {
     ILogger,
 } from "@rocket.chat/apps-engine/definition/accessors";
 
-let sessionCookie: string;
-
 export interface IJiraAccess {
     username: string;
     password: string;
@@ -13,6 +11,9 @@ export interface IJiraAccess {
 }
 
 export class JiraConnection {
+
+    private sessionCookie: string;
+
     public get serverUrl(): string {
         return this.jira.serverUrl;
     }
@@ -30,7 +31,7 @@ export class JiraConnection {
     }
 
     private async loginIfNoSessionCookieIsSet(): Promise<void> {
-        if (!sessionCookie) {
+        if (!this.sessionCookie) {
             await this.login();
         }
     }
@@ -70,11 +71,11 @@ export class JiraConnection {
         const absoluteUrl = this.createFullUrl(relativeUrl);
         this.logger.debug(
             "Requesting " + absoluteUrl,
-            "Using session cookie: " + sessionCookie
+            "Using session cookie: " + this.sessionCookie
         );
         return this.http.get(absoluteUrl, {
             headers: {
-                cookie: sessionCookie,
+                cookie: this.sessionCookie,
             },
         });
     }
@@ -90,7 +91,7 @@ export class JiraConnection {
             throw new Error("Could not login");
         }
         if (response.headers) {
-            sessionCookie = response.headers["set-cookie"];
+            this.sessionCookie = response.headers["set-cookie"];
             this.logger.debug(
                 "Setting session cookie: " + response.headers["set-cookie"]
             );

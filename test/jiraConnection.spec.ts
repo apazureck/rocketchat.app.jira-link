@@ -27,7 +27,7 @@ describe("JiraConnection login tests", () => {
 
     beforeEach(() => {
         httpMock.reset();
-    })
+    });
 
     it("Session Cookie should be requested on 401", async () => {
         // Arrange
@@ -56,7 +56,7 @@ describe("JiraConnection login tests", () => {
 
     it("Login fails should throw error", async () => {
         // Arrange
-
+        httpMock.reset();
         setupLoginFailing(httpMock);
 
         const sut = new JiraConnection(
