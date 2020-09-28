@@ -1,4 +1,8 @@
-import { IHttp, IHttpResponse, ILogger } from "@rocket.chat/apps-engine/definition/accessors";
+import {
+    IHttp,
+    IHttpResponse,
+    ILogger,
+} from "@rocket.chat/apps-engine/definition/accessors";
 
 let sessionCookie: string;
 
@@ -9,68 +13,80 @@ export interface IJiraAccess {
 }
 
 export class JiraConnection {
-
     public get serverUrl(): string {
         return this.jira.serverUrl;
     }
 
-    constructor(private logger: ILogger, private http: IHttp, private jira: IJiraAccess) {
-
-    }
+    constructor(
+        private logger: ILogger,
+        private http: IHttp,
+        private jira: IJiraAccess
+    ) {}
 
     public async request<T>(url: string): Promise<T> {
+        await this.loginIfNoSessionCookieIsSet();
 
-        const fullUrl = this.jira.serverUrl + url.startsWith("/") ? url : ("/" + url);
+        return await this.requestFromServer<T>(url);
+    }
 
-        this.logger.debug("Requesting: " + fullUrl);
-
-        this.logger.debug("Using session cookie: " + sessionCookie);
-
+    private async loginIfNoSessionCookieIsSet(): Promise<void> {
         if (!sessionCookie) {
             await this.login();
         }
+    }
 
-        this.logger.debug("Used session cookie", sessionCookie);
+    private async requestFromServer<T>(relativeUrl: string): Promise<T> {
+        let response: IHttpResponse;
+        let retry = false;
 
-        const response = await this.http.get(url, {
-            headers: {
-                cookie: sessionCookie
+        do {
+            response = await this.performGetRequest(relativeUrl);
+
+            if (this.isSuccessStatusCode(response)) {
+                return response.data;
             }
-        });
 
-        this.logger.debug(
-            "JIRA Server returned HTTP Status",
-            response.statusCode
+            if (!this.isAuthorized(response)) {
+                this.logger.debug("Session cookie expired, logging in again");
+                await this.login();
+                retry = true;
+            } else {
+                retry = false;
+            }
+        } while (retry);
+
+        throw new Error(
+            "Could not get Response. Http Status Code: " + response.statusCode
         );
+    }
 
-        if (response.statusCode === 401) {
-            this.logger.debug("Unauthorized, trying to log in");
-            await this.login();
-            this.logger.debug("Using session cookie: " + sessionCookie);
-            return await this.request<T>(url);
-        }
-        this.logger.debug("Received Response", response);
+    private createFullUrl(relativeUrl: string): string {
+        return this.jira.serverUrl + relativeUrl.startsWith("/")
+            ? relativeUrl
+            : "/" + relativeUrl;
+    }
 
-        if (!this.isSuccessStatusCode(response.statusCode)) {
-            this.logger.error("Response has error status code", response);
-            throw new Error("Could not get Response. Http Status Code: " + response.statusCode);
-        }
+    private performGetRequest(relativeUrl: string): Promise<IHttpResponse> {
+        const absoluteUrl = this.createFullUrl(relativeUrl);
+        this.logger.debug(
+            "Requesting " + absoluteUrl,
+            "Using session cookie: " + sessionCookie
+        );
+        return this.http.get(absoluteUrl, {
+            headers: {
+                cookie: sessionCookie,
+            },
+        });
+    }
 
-        return response.data;
+    private isAuthorized(response: IHttpResponse): boolean {
+        return response.statusCode !== 401;
     }
 
     private async login(): Promise<void> {
-        const response = await this.http.post(
-            this.jira.serverUrl + "/rest/auth/1/session",
-            {
-                data: {
-                    username: this.jira.username,
-                    password: this.jira.password
-                }
-            }
-        );
+        const response = await this.requestLogin();
         this.logger.debug("Got response code " + response.statusCode);
-        if (response.statusCode !== 200) {
+        if (!this.isSuccessStatusCode(response)) {
             throw new Error("Could not login");
         }
         if (response.headers) {
@@ -81,9 +97,18 @@ export class JiraConnection {
         }
     }
 
-    private isSuccessStatusCode(statusCode: number): boolean {
+    private requestLogin(): Promise<IHttpResponse> {
+        return this.http.post(this.serverUrl + "/rest/auth/1/session", {
+            data: {
+                username: this.jira.username,
+                password: this.jira.password,
+            },
+        });
+    }
+
+    private isSuccessStatusCode(response: IHttpResponse): boolean {
         try {
-            return statusCode < 300;
+            return response.statusCode < 300;
         } catch (error) {
             this.logger.error(error);
             return false;

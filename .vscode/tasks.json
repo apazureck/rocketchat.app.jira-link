@@ -21,16 +21,13 @@
         },
         {
             "type": "typescript",
-            "tsconfig": "testtsconfig.json",
+            "tsconfig": "tsconfig.json",
             "option": "watch",
             "problemMatcher": [
                 "$tsc-watch"
             ],
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "label": "tsc: watch - tsconfig.json, no output"
+            "group": "build",
+            "label": "tsc: watch - tsconfig.json"
         }
     ]
 }

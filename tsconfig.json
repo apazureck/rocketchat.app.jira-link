@@ -10,9 +10,14 @@
       "noImplicitReturns": true,
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "outDir": "out"
+      "outDir": "out",
+      "skipLibCheck": true,
+      "types": []
     },
     "include": [
       "src/**/*.ts", "JiraLinkApp.ts", "test/**/*.ts"
     ],
+    "exclude": [
+        "node_modules/**/*"
+    ]
   }
