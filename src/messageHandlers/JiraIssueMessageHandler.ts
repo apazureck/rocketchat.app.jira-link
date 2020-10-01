@@ -1,19 +1,25 @@
 import {
     ILogger,
     IMessageBuilder,
-    ISettingRead
+    ISettingRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 import {
     settingAddAttachments,
-    settingRegex
+    settingRegex,
+    settingsFilterRegex,
 } from "../configuration/configuration";
-import { IJiraConnection } from "../jiraConnection/jiraConnection.abstraction";
+import { IJiraIssueProvider } from "../jiraConnection/jiraConnection.abstraction";
 import { createAttachment, IFoundIssue } from "./domain/attachments";
 import { IssueMessageParser } from "./domain/issueMessageParser";
 
 export class JiraIssueMessageHandler {
-    constructor(private logger: ILogger, private settings: ISettingRead, private jiraConnection: IJiraConnection, private messageBuilder: IMessageBuilder) {}
+    constructor(
+        private logger: ILogger,
+        private settings: ISettingRead,
+        private jiraIssueProvider: IJiraIssueProvider,
+        private messageBuilder: IMessageBuilder
+    ) {}
 
     public async executePreMessageSentModify(
         message: IMessage
@@ -24,13 +30,18 @@ export class JiraIssueMessageHandler {
 
         this.logger.log(message.text);
 
-        const messageparser = new IssueMessageParser(this.jiraConnection, this.logger, await this.settings.getValueById(settingRegex));
-
-        const foundIssues = await messageparser.getIssuesFromMessage(message.text);
-
-        await this.createIssueLinks(
-            foundIssues
+        const messageparser = new IssueMessageParser(
+            this.jiraIssueProvider,
+            this.logger,
+            new RegExp(await this.settings.getValueById(settingRegex), "gm"),
+            new RegExp(await this.settings.getValueById(settingsFilterRegex), "gm")
         );
+
+        const foundIssues = await messageparser.getIssuesFromMessage(
+            message.text
+        );
+
+        await this.createIssueLinks(foundIssues);
 
         if (await this.setAttachmentsIsActivated()) {
             await this.createAttachmentLinks(foundIssues, this.messageBuilder);
@@ -40,7 +51,9 @@ export class JiraIssueMessageHandler {
     }
 
     private async setAttachmentsIsActivated(): Promise<boolean> {
-        return await this.settings.getValueById(settingAddAttachments) === true;
+        return (
+            (await this.settings.getValueById(settingAddAttachments)) === true
+        );
     }
 
     private createAttachmentLinks(

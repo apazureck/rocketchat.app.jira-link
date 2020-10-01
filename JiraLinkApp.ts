@@ -18,6 +18,7 @@ import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
 import { SearchIssueCommand } from "./src/commands/searchIssueCommand";
 import { extendConfiguration } from "./src/configuration/configuration";
 import { createJiraConnection } from "./src/jiraConnection/jiraConnectionFactory";
+import { JiraIssueProvider } from "./src/jiraConnection/jiraIssueProvider";
 import { JiraIssueMessageHandler } from "./src/messageHandlers/JiraIssueMessageHandler";
 import { JiraIssueMessageUpdater } from "./src/messageHandlers/jiraIssueMessageUpdater";
 import {ILogProvider} from "./src/types/ilogprovider";
@@ -64,11 +65,12 @@ export class JiraLinkApp extends App
     ): Promise<IMessage> {
 
         const jiraConnection = await createJiraConnection(this.getLogger(), http, read.getEnvironmentReader().getSettings());
+        const jiraIssueProvider = new JiraIssueProvider(jiraConnection, this.getLogger());
 
         return new JiraIssueMessageHandler(
             this.getLogger(),
             read.getEnvironmentReader().getSettings(),
-            jiraConnection,
+            jiraIssueProvider,
             builder
         ).executePreMessageSentModify(
             message

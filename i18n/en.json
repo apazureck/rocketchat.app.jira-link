@@ -10,5 +10,7 @@
     "jira-link-regex-label": "Jira Issue Regex",
     "jira-link-regex-description": "A javascript regular expression to identify potential JIRA issue candidates in text messages.\nDefaults to PROJECT-###. E.g. MYPRJ-123 PRJ-80",
     "jira-link-add-attachments-label": "Add Attachments",
-    "jira-link-add-attachments-description": "Add attachment if issue is attached in addition to linking them"
+    "jira-link-add-attachments-description": "Add attachment if issue is attached in addition to linking them",
+    "jira-link-filter-regex-label": "Jira Issue Filter Regex",
+    "jira-link-filter-regex-description": "A javascript regular expression to filter issues, which are already in a link, for example."
 }

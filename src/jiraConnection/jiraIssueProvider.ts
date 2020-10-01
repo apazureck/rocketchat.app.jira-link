@@ -1,66 +1,11 @@
 import {
     ILogger
 } from "@rocket.chat/apps-engine/definition/accessors";
-import { IJiraConnection } from "./jiraConnection.abstraction";
-
-export interface IJiraIssueBase {
-    key: string;
-    fields: {
-        issuetype: {
-            name: string;
-            iconUrl: string;
-        };
-        description: string;
-        summary: string;
-        status: {
-            name: string;
-        };
-    };
-
-    /**
-     * These field is set by the issuer for link creation in the attachment
-     *
-     * @type {string}
-     * @memberof IJiraIssue
-     */
-    jiraLinkAddress: string;
-
-    /**
-     * This field is set by the issuer. This is the browse link to the server
-     *
-     * @type {string}
-     * @memberof IJiraIssue
-     */
-    jiraLinkBrowseAddress: string;
-
-    /**
-     * Server the issue was found on
-     *
-     * @type {string}
-     * @memberof IJiraIssue
-     */
-    jiraLinkServerUrl: string;
-}
-
-export interface ISearchResult {
-    expand: string;
-    startAt: number;
-    maxResults: number;
-    total: number;
-    issues: Array<IJiraIssueBase>;
-}
-
-export interface IJiraLinkEntity {
-    jiraLinkAddress: string;
-    jiraLinkBrowseAddress: string;
-    jiraLinkServerUrl: string;
-}
+import { IJiraConnection, IJiraIssue, IJiraIssueProvider, ISearchResult } from "./jiraConnection.abstraction";
 
 export const ISSUE_URL_PREFIX = "/rest/api/2/issue/";
 
-export interface IJiraIssue extends IJiraIssueBase, IJiraLinkEntity {}
-
-export class JiraIssueProvider {
+export class JiraIssueProvider implements IJiraIssueProvider {
 
     constructor(
         private jiraConnection: IJiraConnection,

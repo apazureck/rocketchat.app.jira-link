@@ -1,5 +1,5 @@
-import { IMessageAttachment, MessageActionButtonsAlignment, MessageProcessingType } from "@rocket.chat/apps-engine/definition/messages";
-import { IJiraIssueBase } from "../../jiraConnection/jiraIssueProvider";
+import { IMessageAttachment, MessageActionButtonsAlignment } from "@rocket.chat/apps-engine/definition/messages";
+import { IJiraIssueBase } from "../../jiraConnection/jiraConnection.abstraction";
 
 export interface IFoundIssue {
     /**
@@ -26,6 +26,7 @@ export interface IFoundIssue {
      */
     issueId: string;
 }
+
 /**
  *
  *

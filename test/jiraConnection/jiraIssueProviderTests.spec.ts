@@ -5,7 +5,8 @@ import { expect } from "chai";
 import "mocha";
 import { Mock } from "typemoq";
 import { JiraConnection } from "../../src/jiraConnection/jiraConnection";
-import { IJiraIssue, ISearchResult, ISSUE_URL_PREFIX, JiraIssueProvider } from "../../src/jiraConnection/jiraIssueProvider";
+import { IJiraIssue, ISearchResult } from "../../src/jiraConnection/jiraConnection.abstraction";
+import { ISSUE_URL_PREFIX, JiraIssueProvider } from "../../src/jiraConnection/jiraIssueProvider";
 
 describe("Jira Issue Provider Tests", () => {
     it("Failed request should return undefined", async () => {

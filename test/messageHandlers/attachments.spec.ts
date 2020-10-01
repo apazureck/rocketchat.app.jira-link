@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import "mocha";
-import { IJiraIssue } from "../../src/jiraConnection/jiraIssueProvider";
+import { IJiraIssue } from "../../src/jiraConnection/jiraConnection.abstraction";
 import { createAttachment, IFoundIssue } from "../../src/messageHandlers/domain/attachments";
 
 describe("Tests for attachment generation", () => {
