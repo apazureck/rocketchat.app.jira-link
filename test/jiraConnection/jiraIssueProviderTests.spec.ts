@@ -1,11 +1,11 @@
+// tslint:disable:no-unused-expression
+
 import { ILogger } from "@rocket.chat/apps-engine/definition/accessors";
 import { expect } from "chai";
 import "mocha";
 import { Mock } from "typemoq";
-// tslint:disable:no-unused-expression
-
-import { JiraConnection } from "../src/jiraConnection/jiraConnection";
-import { IJiraIssue, ISearchResult, ISSUE_URL_PREFIX, JiraIssueProvider } from "../src/jiraConnection/jiraIssueProvider";
+import { JiraConnection } from "../../src/jiraConnection/jiraConnection";
+import { IJiraIssue, ISearchResult, ISSUE_URL_PREFIX, JiraIssueProvider } from "../../src/jiraConnection/jiraIssueProvider";
 
 describe("Jira Issue Provider Tests", () => {
     it("Failed request should return undefined", async () => {
