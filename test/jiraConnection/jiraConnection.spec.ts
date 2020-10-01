@@ -11,7 +11,7 @@ import { IMock, It, Mock, Times } from "typemoq";
 import {
     IJiraAccess,
     JiraConnection,
-} from "../src/jiraConnection/jiraConnection";
+} from "../../src/jiraConnection/jiraConnection";
 
 const loginurl = "server/rest/auth/1/session";
 
