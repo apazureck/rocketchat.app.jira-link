@@ -18,7 +18,7 @@ import {
 } from "../configuration/configuration";
 import { JiraConnection } from "../jiraConnection/jiraConnection";
 import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
-import { createAttachment, IFoundIssue } from "./attachments";
+import { createAttachment, IFoundIssue } from "./domain/attachments";
 
 export class JiraIssueMessageUpdater {
     constructor(private logger: ILogger) {}

@@ -1,11 +1,9 @@
 import {
     IHttp,
-    ILogger,
     IModify,
     IPersistence,
     IRead
 } from "@rocket.chat/apps-engine/definition/accessors";
-import { App } from "@rocket.chat/apps-engine/definition/App";
 import {
     ISlashCommand,
     ISlashCommandPreview,
@@ -17,7 +15,6 @@ import {
     settingJiraPassword,
     settingJiraServerAddress,
     settingJiraUserName,
-    settingRegex
 } from "../configuration/configuration";
 import { JiraConnection } from "../jiraConnection/jiraConnection";
 import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";

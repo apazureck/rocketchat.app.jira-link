@@ -2,7 +2,9 @@ import {
     IHttp,
     IHttpResponse,
     ILogger,
+    ISettingsExtend,
 } from "@rocket.chat/apps-engine/definition/accessors";
+import { IJiraConnection } from "./jiraConnection.abstraction";
 
 export interface IJiraAccess {
     username: string;
@@ -10,7 +12,7 @@ export interface IJiraAccess {
     serverUrl: string;
 }
 
-export class JiraConnection {
+export class JiraConnection implements IJiraConnection {
 
     private sessionCookie: string;
 

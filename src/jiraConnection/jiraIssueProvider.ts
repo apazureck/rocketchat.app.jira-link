@@ -1,7 +1,7 @@
 import {
     ILogger
 } from "@rocket.chat/apps-engine/definition/accessors";
-import { JiraConnection } from "./jiraConnection";
+import { IJiraConnection } from "./jiraConnection.abstraction";
 
 export interface IJiraIssueBase {
     key: string;
@@ -63,7 +63,7 @@ export interface IJiraIssue extends IJiraIssueBase, IJiraLinkEntity {}
 export class JiraIssueProvider {
 
     constructor(
-        private jiraConnection: JiraConnection,
+        private jiraConnection: IJiraConnection,
         private logger: ILogger
     ) {}
 

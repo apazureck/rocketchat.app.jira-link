@@ -1,5 +1,5 @@
 import { IMessageAttachment, MessageActionButtonsAlignment, MessageProcessingType } from "@rocket.chat/apps-engine/definition/messages";
-import { IJiraIssueBase } from "../jiraConnection/jiraIssueProvider";
+import { IJiraIssueBase } from "../../jiraConnection/jiraIssueProvider";
 
 export interface IFoundIssue {
     /**

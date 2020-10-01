@@ -17,6 +17,7 @@ import {
 import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
 import { SearchIssueCommand } from "./src/commands/searchIssueCommand";
 import { extendConfiguration } from "./src/configuration/configuration";
+import { createJiraConnection } from "./src/jiraConnection/jiraConnectionFactory";
 import { JiraIssueMessageHandler } from "./src/messageHandlers/JiraIssueMessageHandler";
 import { JiraIssueMessageUpdater } from "./src/messageHandlers/jiraIssueMessageUpdater";
 import {ILogProvider} from "./src/types/ilogprovider";
@@ -54,21 +55,23 @@ export class JiraLinkApp extends App
         this.getLogger().log("Jira Link started");
     }
 
-    public executePreMessageSentModify(
+    public async executePreMessageSentModify(
         message: IMessage,
         builder: IMessageBuilder,
         read: IRead,
         http: IHttp,
         persistence: IPersistence
     ): Promise<IMessage> {
+
+        const jiraConnection = await createJiraConnection(this.getLogger(), http, read.getEnvironmentReader().getSettings());
+
         return new JiraIssueMessageHandler(
-            this.getLogger()
-        ).executePreMessageSentModify(
-            message,
-            read,
-            http,
-            persistence,
+            this.getLogger(),
+            read.getEnvironmentReader().getSettings(),
+            jiraConnection,
             builder
+        ).executePreMessageSentModify(
+            message
         );
     }
 
@@ -76,6 +79,6 @@ export class JiraLinkApp extends App
         configuration: IConfigurationExtend,
         environmentRead: IEnvironmentRead
     ): Promise<void> {
-        extendConfiguration(configuration, environmentRead);
+        extendConfiguration(configuration.settings);
     }
 }

@@ -1,31 +1,22 @@
 import {
-    IHttp,
     ILogger,
     IMessageBuilder,
-    IPersistence,
-    IRead,
     ISettingRead
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 import {
     settingAddAttachments,
-    settingJiraPassword,
-    settingJiraServerAddress,
-    settingJiraUserName,
     settingRegex
 } from "../configuration/configuration";
-import { JiraConnection } from "../jiraConnection/jiraConnection";
-import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
-import { createAttachment, IFoundIssue } from "./attachments";
+import { IJiraConnection } from "../jiraConnection/jiraConnection.abstraction";
+import { createAttachment, IFoundIssue } from "./domain/attachments";
+import { IssueMessageParser } from "./domain/issueMessageParser";
 
 export class JiraIssueMessageHandler {
-    constructor(private logger: ILogger) {}
+    constructor(private logger: ILogger, private settings: ISettingRead, private jiraConnection: IJiraConnection, private messageBuilder: IMessageBuilder) {}
+
     public async executePreMessageSentModify(
-        message: IMessage,
-        read: IRead,
-        http: IHttp,
-        persistence: IPersistence,
-        builder: IMessageBuilder
+        message: IMessage
     ): Promise<IMessage> {
         if (!message.text) {
             return message;
@@ -33,25 +24,23 @@ export class JiraIssueMessageHandler {
 
         this.logger.log(message.text);
 
-        const settings = read.getEnvironmentReader().getSettings();
+        const messageparser = new IssueMessageParser(this.jiraConnection, this.logger, await this.settings.getValueById(settingRegex));
 
-        const foundIssues = await this.getIssuesFromMessage(
-            message.text,
-            settings,
-            http
-        );
+        const foundIssues = await messageparser.getIssuesFromMessage(message.text);
 
         await this.createIssueLinks(
-            foundIssues,
-            builder,
-            await settings.getValueById(settingJiraServerAddress)
+            foundIssues
         );
 
-        if ((await settings.getValueById(settingAddAttachments)) === true) {
-            await this.createAttachmentLinks(foundIssues, builder);
+        if (await this.setAttachmentsIsActivated()) {
+            await this.createAttachmentLinks(foundIssues, this.messageBuilder);
         }
 
-        return builder.getMessage();
+        return this.messageBuilder.getMessage();
+    }
+
+    private async setAttachmentsIsActivated(): Promise<boolean> {
+        return await this.settings.getValueById(settingAddAttachments) === true;
     }
 
     private createAttachmentLinks(
@@ -63,67 +52,16 @@ export class JiraIssueMessageHandler {
     }
 
     private async createIssueLinks(
-        foundIssues: Array<IFoundIssue>,
-        messageBuilder: IMessageBuilder,
-        jiraServerUrl: string
+        foundIssues: Array<IFoundIssue>
     ): Promise<void> {
-        let text = messageBuilder.getText();
+        let text = this.messageBuilder.getText();
         for (const issue of foundIssues) {
             text = text.replace(
                 issue.issueId,
                 `[${issue.issue.key}](${issue.issue.jiraLinkBrowseAddress})`
             );
         }
-        messageBuilder.setText(text);
-        messageBuilder.setParseUrls(false);
-    }
-
-    private async getIssuesFromMessage(
-        messageText: string,
-        settings: ISettingRead,
-        http: IHttp
-    ): Promise<Array<IFoundIssue>> {
-        // Get Regex from the settings
-        const regex = new RegExp(
-            await settings.getValueById(settingRegex),
-            "gm"
-        );
-
-        const jc = new JiraConnection(this.logger, http, {
-            serverUrl: await settings.getValueById(
-                settingJiraServerAddress
-            ),
-            password: await settings.getValueById(settingJiraPassword),
-            username: await settings.getValueById(settingJiraUserName)
-        });
-
-        // Get a new issuer to find the issues on the jira server
-        const issuer = new JiraIssueProvider(
-            jc,
-            this.logger
-        );
-
-        // Find all issues in the message that are available on the server
-        const foundIssues: Array<IFoundIssue> = [];
-        let foundMatch: RegExpExecArray | null;
-
-        // Push all found issues on the match array for later replacement
-        // tslint:disable-next-line: no-conditional-assignment
-        while ((foundMatch = regex.exec(messageText))) {
-            const issueId = foundMatch[0];
-            this.logger.debug("Found issue " + issueId);
-            const issue = await issuer.getIssue(issueId);
-            if (issue) {
-                this.logger.debug(
-                    "Found matching issue on JIRA sever: " + issue.key
-                );
-                foundIssues.push({
-                    issue,
-                    foundMatch,
-                    issueId
-                });
-            }
-        }
-        return foundIssues;
+        this.messageBuilder.setText(text);
+        this.messageBuilder.setParseUrls(false);
     }
 }
