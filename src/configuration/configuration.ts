@@ -1,8 +1,10 @@
 import {
     IConfigurationExtend,
-    IEnvironmentRead
+    IEnvironmentRead,
+    ISettingsExtend
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { SettingType } from "@rocket.chat/apps-engine/definition/settings";
+import { config } from "chai";
 
 export const settingJiraServerAddress = "jira-link-server-address";
 export const settingJiraUserName = "jira-link-username";
@@ -14,11 +16,10 @@ const sectionConnection = "Connection Settings";
 const sectionAttachments = "Attachments";
 
 export function extendConfiguration(
-    configuration: IConfigurationExtend,
-    environmentRead: IEnvironmentRead
+    settings: ISettingsExtend
 ): void {
     /// Server Settings
-    configuration.settings.provideSetting({
+    settings.provideSetting({
         section: sectionConnection,
         id: settingJiraServerAddress,
         packageValue: "",
@@ -30,7 +31,7 @@ export function extendConfiguration(
         i18nDescription: settingJiraServerAddress + "-description",
         i18nPlaceholder: "http://localhost:5000"
     });
-    configuration.settings.provideSetting({
+    settings.provideSetting({
         section: sectionConnection,
         id: settingJiraUserName,
         packageValue: "",
@@ -42,7 +43,7 @@ export function extendConfiguration(
         i18nDescription: settingJiraUserName + "-description",
         i18nPlaceholder: "John Doe"
     });
-    configuration.settings.provideSetting({
+    settings.provideSetting({
         section: sectionConnection,
         id: settingJiraPassword,
         packageValue: "",
@@ -56,7 +57,7 @@ export function extendConfiguration(
     });
 
     /// Regular Expression
-    configuration.settings.provideSetting({
+    settings.provideSetting({
         id: settingRegex,
         packageValue: "\\b\\w+-\\d+\\b",
         public: false,
@@ -68,7 +69,7 @@ export function extendConfiguration(
     });
 
     // Attachment Settings
-    configuration.settings.provideSetting({
+    settings.provideSetting({
         id: settingAddAttachments,
         section: sectionAttachments,
         packageValue: true,

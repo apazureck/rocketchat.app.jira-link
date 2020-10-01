@@ -28,6 +28,8 @@ describe("Tests for attachment generation", () => {
 
         const attachment = createAttachment(foundIissue);
 
+        // Assert
+
         expect((attachment as any).jlTag).be.equal(foundIissue.issue.key);
         expect(attachment.text).be.equal(`**${foundIissue.issue.key}** [${foundIissue.issue.fields.summary}](${foundIissue.issue.jiraLinkBrowseAddress}) - ${foundIissue.issue.fields.status.name}`);
         expect(attachment.thumbnailUrl).be.equal(foundIissue.issue.fields.issuetype.iconUrl);
