@@ -31,14 +31,14 @@ export class JiraIssueMessageHandler {
 
         await this.createIssueLinks(foundIssues);
 
-        if (await this.setAttachmentsIsActivated()) {
+        if (await this.addAttachmentsIsActivated()) {
             await this.createAttachmentLinks(foundIssues, this.messageBuilder);
         }
 
         return this.messageBuilder.getMessage();
     }
 
-    private async setAttachmentsIsActivated(): Promise<boolean> {
+    private async addAttachmentsIsActivated(): Promise<boolean> {
         return ((await this.settings.getValueById(settingAddAttachments)) === true
         );
     }
@@ -48,7 +48,7 @@ export class JiraIssueMessageHandler {
         builder: IMessageBuilder
     ) {
         this.logger.debug("Attachments", builder.getAttachments());
-        builder.setAttachments(foundIssues.map(this.attachmentCreator.createAttachment));
+        builder.setAttachments(foundIssues.map(i => this.attachmentCreator.createAttachment(i)));
     }
 
     private async createIssueLinks(

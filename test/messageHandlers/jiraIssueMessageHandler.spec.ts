@@ -7,7 +7,13 @@ import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 import { expect } from "chai";
 import "mocha";
 import { It, Mock, Times } from "typemoq";
-import { IAttachmentCreator, IFoundIssue, IIssueReplacer, IJiraIssueMessageParser } from "../../src/definition/messageHandling";
+import { settingAddAttachments } from "../../src/configuration/configuration";
+import {
+    IAttachmentCreator,
+    IFoundIssue,
+    IIssueReplacer,
+    IJiraIssueMessageParser,
+} from "../../src/definition/messageHandling";
 import { JiraIssueMessageHandler } from "../../src/messageHandlers/JiraIssueMessageHandler";
 
 describe("Jira Issue Message Handler Tests", () => {
@@ -62,9 +68,7 @@ describe("Jira Issue Message Handler Tests", () => {
 
         const text = "text";
 
-        messageBuilderMock
-            .setup((mb) => mb.getText())
-            .returns(() => text);
+        messageBuilderMock.setup((mb) => mb.getText()).returns(() => text);
 
         messageParserMock
             .setup((pm) => pm.getIssuesFromMessage(text))
@@ -97,13 +101,11 @@ describe("Jira Issue Message Handler Tests", () => {
         const input = "input to issue replacer";
         const output = "output  FROM  issue replacer";
 
-        messageBuilderMock
-            .setup((mb) => mb.getText())
-            .returns(() => input);
+        messageBuilderMock.setup((mb) => mb.getText()).returns(() => input);
 
         messageParserMock
             .setup((pm) => pm.getIssuesFromMessage(input))
-            .returns(async () => [ Mock.ofType<IFoundIssue>().object ]);
+            .returns(async () => [Mock.ofType<IFoundIssue>().object]);
 
         issueReplacerMock
             .setup((ir) => ir.replaceIssues(It.isAny(), input))
@@ -129,6 +131,54 @@ describe("Jira Issue Message Handler Tests", () => {
             Times.once()
         );
 
-        messageBuilderMock.verify(mb => mb.setText(output), Times.once());
+        messageBuilderMock.verify((mb) => mb.setText(output), Times.once());
+        attachmentCreatorMock.verify(
+            (ac) => ac.createAttachment(It.isAny()),
+            Times.never()
+        );
+    });
+
+    it("Attachments should be created if requested", async () => {
+        // Arrange
+
+        const input = "input to issue replacer";
+        const output = "output  FROM  issue replacer";
+
+        messageBuilderMock.setup((mb) => mb.getText()).returns(() => input);
+
+        messageParserMock
+            .setup((pm) => pm.getIssuesFromMessage(input))
+            .returns(async () => [Mock.ofType<IFoundIssue>().object]);
+
+        issueReplacerMock
+            .setup((ir) => ir.replaceIssues(It.isAny(), input))
+            .returns(() => output);
+
+        settingsMock
+            .setup((s) => s.getValueById(settingAddAttachments))
+            .returns(async () => true);
+
+        const cut = new JiraIssueMessageHandler(
+            loggerMock.object,
+            settingsMock.object,
+            messageParserMock.object,
+            messageBuilderMock.object,
+            issueReplacerMock.object,
+            attachmentCreatorMock.object
+        );
+
+        // Act
+
+        const result = await cut.replaceIssuesInMessage();
+
+        // Assert
+
+        messageParserMock.verify(
+            (pm) => pm.getIssuesFromMessage(input),
+            Times.once()
+        );
+
+        messageBuilderMock.verify((mb) => mb.setText(output), Times.once());
+        attachmentCreatorMock.verify(ac => ac.createAttachment(It.isAny()), Times.once());
     });
 });
