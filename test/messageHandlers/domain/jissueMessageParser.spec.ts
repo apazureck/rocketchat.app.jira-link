@@ -76,8 +76,9 @@ describe("Tests for message parser", () => {
         // Arrange
 
         const issuekey1 = "ISSUE-123";
+        const issuekey2 = "ISSUE-254";
 
-        const testmessage = `Hello, have a look at [${issuekey1}](http://jira-server/issues/${issuekey1}), please`;
+        const testmessage = `Hello, have a look at [${issuekey1}](http://jira-server/issues/${issuekey1}), and ${issuekey2} please`;
 
         const jipMock = Mock.ofType<IJiraIssueProvider>();
         const loggerMock = Mock.ofType<ILogger>();
@@ -85,6 +86,11 @@ describe("Tests for message parser", () => {
         jipMock.setup(jip => jip.getIssue(issuekey1)).returns(async () => {
             return {
                 key: issuekey1
+            } as IJiraIssue;
+        });
+        jipMock.setup(jip => jip.getIssue(issuekey2)).returns(async () => {
+            return {
+                key: issuekey2
             } as IJiraIssue;
         });
 
@@ -96,6 +102,6 @@ describe("Tests for message parser", () => {
 
         // Assert
 
-        expect(result.length).equals(0);
+        expect(result.length).equals(1);
     });
 });
