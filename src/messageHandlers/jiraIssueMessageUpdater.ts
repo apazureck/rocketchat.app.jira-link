@@ -3,25 +3,28 @@ import {
     ILogger,
     IMessageBuilder,
     IPersistence,
-    IRead
+    IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import {
     IMessage,
-    IMessageAttachment
+    IMessageAttachment,
 } from "@rocket.chat/apps-engine/definition/messages";
 import {
     settingAddAttachments,
     settingJiraPassword,
     settingJiraServerAddress,
     settingJiraUserName,
-    settingRegex
+    settingRegex,
 } from "../configuration/configuration";
+import { IAttachmentCreator, IFoundIssue } from "../definition/messageHandling";
 import { JiraConnection } from "../jiraConnection/jiraConnection";
 import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
-import { createAttachment, IFoundIssue } from "./domain/attachments";
 
 export class JiraIssueMessageUpdater {
-    constructor(private logger: ILogger) {}
+    constructor(
+        private logger: ILogger,
+        private attachmentCreator: IAttachmentCreator
+    ) {}
     public async executePreMessageUpdatedModify(
         message: IMessage,
         read: IRead,
@@ -69,7 +72,7 @@ export class JiraIssueMessageUpdater {
                 toDelete.push(i);
             }
         });
-        toDelete.forEach(index => builder.removeAttachment(index));
+        toDelete.forEach((index) => builder.removeAttachment(index));
     }
 
     private createAttachments(
@@ -77,7 +80,9 @@ export class JiraIssueMessageUpdater {
         builder: IMessageBuilder
     ) {
         this.logger.debug("Attachments", builder.getAttachments());
-        builder.setAttachments(foundIssues.map(i => createAttachment(i)));
+        builder.setAttachments(
+            foundIssues.map((i) => this.attachmentCreator.createAttachment(i))
+        );
     }
 
     private async createIssueLinks(
@@ -89,9 +94,9 @@ export class JiraIssueMessageUpdater {
         for (const issue of foundIssues) {
             text = text.replace(
                 issue.foundMatch[0],
-                `[${issue.issue.key}](${jiraServerUrl +
-                    "/browse/" +
-                    issue.issue.key})`
+                `[${issue.issue.key}](${
+                    jiraServerUrl + "/browse/" + issue.issue.key
+                })`
             );
         }
         messageBuilder.setText(text);
@@ -113,18 +118,14 @@ export class JiraIssueMessageUpdater {
         );
         const regex = new RegExp(regstring, "gm");
 
-        const jc = new JiraConnection(this.logger, http,
-            {
-                serverUrl,
-                password,
-                username
-            });
+        const jc = new JiraConnection(this.logger, http, {
+            serverUrl,
+            password,
+            username,
+        });
 
         // Get a new issuer to find the issues on the jira server
-        const issuer = new JiraIssueProvider(
-            jc,
-            this.logger
-        );
+        const issuer = new JiraIssueProvider(jc, this.logger);
 
         // Find all issues in the message that are available on the server
         const foundIssues: Array<IFoundIssue> = [];
@@ -143,7 +144,7 @@ export class JiraIssueMessageUpdater {
                 foundIssues.push({
                     issue,
                     foundMatch,
-                    issueId
+                    issueId,
                 });
             }
         }

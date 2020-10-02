@@ -4,7 +4,7 @@ import {
     ILogger,
     ISettingsExtend,
 } from "@rocket.chat/apps-engine/definition/accessors";
-import { IJiraConnection } from "./jiraConnection.abstraction";
+import { IJiraConnection } from "../definition/jiraConnection";
 
 export interface IJiraAccess {
     username: string;

@@ -1,16 +1,16 @@
-import { ILogger } from "@rocket.chat/apps-engine/definition/accessors";
-import {  IJiraIssueProvider } from "../../jiraConnection/jiraConnection.abstraction";
-import { IFoundIssue } from "./attachments";
+import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
+import { settingFilterRegex, settingRegex } from "../../configuration/configuration";
+import { IJiraIssueProvider } from "../../definition/jiraConnection";
+import { IFoundIssue, IJiraIssueMessageParser } from "../../definition/messageHandling";
 
-export class IssueMessageParser {
+export class IssueMessageParser implements IJiraIssueMessageParser {
     /**
      *
      */
     constructor(
         private issuer: IJiraIssueProvider,
         private logger: ILogger,
-        private regex: RegExp,
-        private filterRegex: RegExp,
+        private settings: ISettingRead
     ) {}
     public async getIssuesFromMessage(
         messageText: string
@@ -21,26 +21,27 @@ export class IssueMessageParser {
 
         let foundMatch: RegExpExecArray | null;
 
-        const filteredText = messageText.replace(this.filterRegex, "");
+        const filterRegex = new RegExp(await this.settings.getValueById(settingFilterRegex), "gm");
+        const filteredText = messageText.replace(filterRegex, "");
 
+        const searchIssueRegex = new RegExp(await this.settings.getValueById(settingRegex), "gm");
         // tslint:disable-next-line: no-conditional-assignment
-        while ((foundMatch = this.regex.exec(filteredText))) {
+        while (foundMatch = searchIssueRegex.exec(filteredText)) {
             const issueId = foundMatch.pop();
 
             if (!issueId) {
                 continue;
             }
 
-            this.logger.debug("Found issue " + issueId);
+            this.logger.debug("Found issue", issueId);
             const issue = await this.issuer.getIssue(issueId);
 
             if (!issue) {
                 continue;
             }
 
-            this.logger.debug(
-                "Found matching issue on JIRA sever: " + issue.key
-            );
+            this.logger.debug("Found matching issue on JIRA sever", issue);
+
             foundIssues.push({
                 issue,
                 foundMatch,

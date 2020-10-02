@@ -1,7 +1,7 @@
 import {
     ILogger
 } from "@rocket.chat/apps-engine/definition/accessors";
-import { IJiraConnection, IJiraIssue, IJiraIssueProvider, ISearchResult } from "./jiraConnection.abstraction";
+import { IJiraConnection, IJiraIssue, IJiraIssueProvider, ISearchResult } from "../definition/jiraConnection";
 
 export const ISSUE_URL_PREFIX = "/rest/api/2/issue/";
 

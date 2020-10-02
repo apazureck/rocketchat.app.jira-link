@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import "mocha";
-import { IJiraIssue } from "../../src/jiraConnection/jiraConnection.abstraction";
-import { createAttachment, IFoundIssue } from "../../src/messageHandlers/domain/attachments";
+import { IJiraIssue } from "../../../src/definition/jiraConnection";
+import { IFoundIssue } from "../../../src/definition/messageHandling";
+import { AttachmentCreator } from "../../../src/messageHandlers/domain/attachmentCreator";
 
 describe("Tests for attachment generation", () => {
     it("Correct Issue should create attachment", () => {
@@ -24,9 +25,11 @@ describe("Tests for attachment generation", () => {
             } as IJiraIssue
         };
 
+        const cut = new AttachmentCreator();
+
         // Act
 
-        const attachment = createAttachment(foundIissue);
+        const attachment = cut.createAttachment(foundIissue);
 
         // Assert
 

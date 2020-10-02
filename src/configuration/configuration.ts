@@ -11,7 +11,7 @@ export const settingJiraUserName = "jira-link-username";
 export const settingJiraPassword = "jira-link-password";
 export const settingRegex = "jira-link-regex";
 export const settingAddAttachments = "jira-link-add-attachments";
-export const settingsFilterRegex = "jira-link-filter-regex";
+export const settingFilterRegex = "jira-link-filter-regex";
 
 const sectionConnection = "Connection Settings";
 const sectionAttachments = "Attachments";
@@ -71,14 +71,14 @@ export function extendConfiguration(
 
     /// Filter Regular Expression
     settings.provideSetting({
-        id: settingsFilterRegex,
+        id: settingFilterRegex,
         packageValue: "\\[.*?(\\w+-\\d+).*?\\]\\(.*?\\1.*?\\)",
         public: false,
         type: SettingType.CODE,
         multiline: false,
         required: true,
-        i18nLabel: settingsFilterRegex + "-label",
-        i18nDescription: settingsFilterRegex + "-description"
+        i18nLabel: settingFilterRegex + "-label",
+        i18nDescription: settingFilterRegex + "-description"
     });
 
     // Attachment Settings

@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 import {
     IAppAccessors,
     IConfigurationExtend,
@@ -19,6 +21,8 @@ import { SearchIssueCommand } from "./src/commands/searchIssueCommand";
 import { extendConfiguration } from "./src/configuration/configuration";
 import { createJiraConnection } from "./src/jiraConnection/jiraConnectionFactory";
 import { JiraIssueProvider } from "./src/jiraConnection/jiraIssueProvider";
+import { IssueMessageParser } from "./src/messageHandlers/domain/issueMessageParser";
+import { IssueReplacer } from "./src/messageHandlers/domain/issueReplacer";
 import { JiraIssueMessageHandler } from "./src/messageHandlers/JiraIssueMessageHandler";
 import { JiraIssueMessageUpdater } from "./src/messageHandlers/jiraIssueMessageUpdater";
 import {ILogProvider} from "./src/types/ilogprovider";
@@ -66,15 +70,16 @@ export class JiraLinkApp extends App
 
         const jiraConnection = await createJiraConnection(this.getLogger(), http, read.getEnvironmentReader().getSettings());
         const jiraIssueProvider = new JiraIssueProvider(jiraConnection, this.getLogger());
+        const messageParser = new IssueMessageParser(jiraIssueProvider, this.getLogger(), read.getEnvironmentReader().getSettings());
+        const issueReplacer = new IssueReplacer();
 
         return new JiraIssueMessageHandler(
             this.getLogger(),
             read.getEnvironmentReader().getSettings(),
-            jiraIssueProvider,
-            builder
-        ).executePreMessageSentModify(
-            message
-        );
+            messageParser,
+            builder,
+            issueReplacer
+        ).replaceIssuesInMessage();
     }
 
     protected async extendConfiguration(

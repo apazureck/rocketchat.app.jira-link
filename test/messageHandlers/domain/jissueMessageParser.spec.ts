@@ -1,12 +1,17 @@
-import { ILogger } from "@rocket.chat/apps-engine/definition/accessors";
+import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
 import { expect } from "chai";
 import "mocha";
 import { It, Mock } from "typemoq";
-import { IJiraIssue, IJiraIssueProvider } from "../../../src/jiraConnection/jiraConnection.abstraction";
+import { settingFilterRegex, settingRegex } from "../../../src/configuration/configuration";
+import { IJiraIssue, IJiraIssueProvider } from "../../../src/definition/jiraConnection";
 import { IssueMessageParser } from "../../../src/messageHandlers/domain/issueMessageParser";
 
 const defaultRegex = /\b\w+-\d+\b/gm;
 const filterRegex = /\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)/gm;
+
+const settingsMock = Mock.ofType<ISettingRead>();
+settingsMock.setup(s => s.getValueById(settingRegex)).returns(async () => defaultRegex.source);
+settingsMock.setup(s => s.getValueById(settingFilterRegex)).returns(async () => filterRegex.source);
 
 describe("Tests for message parser", () => {
     it("find issue from simple text", async () => {
@@ -23,7 +28,8 @@ describe("Tests for message parser", () => {
                 key: issuekey
             } as IJiraIssue;
         });
-        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, defaultRegex, filterRegex);
+
+        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, settingsMock.object);
 
         // Act
 
@@ -61,7 +67,7 @@ describe("Tests for message parser", () => {
             } as IJiraIssue;
         });
 
-        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, defaultRegex, filterRegex);
+        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, settingsMock.object);
 
         // Act
 
@@ -94,7 +100,7 @@ describe("Tests for message parser", () => {
             } as IJiraIssue;
         });
 
-        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, defaultRegex, filterRegex);
+        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, settingsMock.object);
 
         // Act
 
