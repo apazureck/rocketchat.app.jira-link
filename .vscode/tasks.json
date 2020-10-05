@@ -11,13 +11,26 @@
                 "isDefault": true
             },
             "command": "rc-apps",
+            "options": {
+                "cwd": "./app"
+            },
             "args": [
                 "deploy",
                 "-p=123",
                 "-u=hans",
                 "--update",
                 "--url=http://localhost:3000"
-            ]
+            ],
+            "dependsOn": ["npm install missing app dependencies"]
+        },
+        {
+            "label": "npm install missing app dependencies",
+            "type": "shell",
+            "options": {
+                "cwd": "./app"
+            },
+            "command": "install-missing",
+
         },
         {
             "type": "typescript",

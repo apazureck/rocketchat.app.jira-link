@@ -16,7 +16,7 @@
       "types": []
     },
     "include": [
-      "./app/src/**/*.ts", "./app/JiraLinkApp.ts", "./app/test/**/*.ts"
+      "./app/src/**/*.ts", "./app/JiraLinkApp.ts", "./test/**/*.ts"
     ],
     "exclude": [
         "./app/node_modules/**/*"
