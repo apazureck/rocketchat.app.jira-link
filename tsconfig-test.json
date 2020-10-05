@@ -11,6 +11,8 @@
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "outDir": "out",
+      "skipLibCheck": true,
+      "noEmit": true,
       "types": []
     },
     "include": [
@@ -20,14 +22,3 @@
         "node_modules/**/*"
     ]
   }
-
-//     target: ts.ScriptTarget.ES2017,
-//     module: ts.ModuleKind.CommonJS,
-//     moduleResolution: ts.ModuleResolutionKind.NodeJs,
-//     declaration: false,
-//     noImplicitAny: false,
-//     removeComments: true,
-//     strictNullChecks: true,
-//     noImplicitReturns: true,
-//     emitDecoratorMetadata: true,
-//     experimentalDecorators: true,

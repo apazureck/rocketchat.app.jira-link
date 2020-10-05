@@ -21,6 +21,7 @@ import { SearchIssueCommand } from "./src/commands/searchIssueCommand";
 import { extendConfiguration } from "./src/configuration/configuration";
 import { createJiraConnection } from "./src/jiraConnection/jiraConnectionFactory";
 import { JiraIssueProvider } from "./src/jiraConnection/jiraIssueProvider";
+import { AttachmentCreator } from "./src/messageHandlers/domain/attachmentCreator";
 import { IssueMessageParser } from "./src/messageHandlers/domain/issueMessageParser";
 import { IssueReplacer } from "./src/messageHandlers/domain/issueReplacer";
 import { JiraIssueMessageHandler } from "./src/messageHandlers/JiraIssueMessageHandler";
@@ -41,7 +42,8 @@ export class JiraLinkApp extends App
         persistence: IPersistence
     ): Promise<IMessage> {
         return new JiraIssueMessageUpdater(
-            this.getLogger()
+            this.getLogger(),
+            new AttachmentCreator()
         ).executePreMessageUpdatedModify(
             message,
             read,
@@ -78,7 +80,8 @@ export class JiraLinkApp extends App
             read.getEnvironmentReader().getSettings(),
             messageParser,
             builder,
-            issueReplacer
+            issueReplacer,
+            new AttachmentCreator()
         ).replaceIssuesInMessage();
     }
 

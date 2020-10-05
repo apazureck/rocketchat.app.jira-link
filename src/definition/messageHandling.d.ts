@@ -1,3 +1,6 @@
+import { IMessageAttachment } from "@rocket.chat/apps-engine/definition/messages";
+import { IJiraIssueBase } from "./jiraConnection";
+
 export interface IAttachmentCreator {
     createAttachment(i: IFoundIssue): IMessageAttachment
 }
