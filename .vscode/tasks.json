@@ -11,6 +11,9 @@
                 "isDefault": true
             },
             "command": "rc-apps",
+            "options": {
+                "cwd": "./src"
+            },
             "args": [
                 "deploy",
                 "-p=123",

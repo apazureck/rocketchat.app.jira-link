@@ -4,7 +4,6 @@ import {
     ISettingsExtend
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { SettingType } from "@rocket.chat/apps-engine/definition/settings";
-import { config } from "chai";
 
 export const settingJiraServerAddress = "jira-link-server-address";
 export const settingJiraUserName = "jira-link-username";
