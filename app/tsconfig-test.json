@@ -16,9 +16,9 @@
       "types": []
     },
     "include": [
-      "src/**/*.ts", "JiraLinkApp.ts", "test/**/*.ts"
+      "./app/src/**/*.ts", "./app/JiraLinkApp.ts", "./app/test/**/*.ts"
     ],
     "exclude": [
-        "node_modules/**/*"
+        "./app/node_modules/**/*"
     ]
   }
