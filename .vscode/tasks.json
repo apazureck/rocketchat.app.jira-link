@@ -29,8 +29,11 @@
             "options": {
                 "cwd": "./app"
             },
-            "command": "install-missing",
-
+            "windows":{
+                // Just install node packages if not already installed
+                "command": "if (-not (Test-Path node_modules)) { npm i }",  
+            },
+            "command": "npm i"
         },
         {
             "type": "typescript",

@@ -1,25 +1,19 @@
 {
     "compilerOptions": {
-      "target": "es2017",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "declaration": false,
-      "noImplicitAny": false,
-      "removeComments": true,
-      "strictNullChecks": true,
-      "noImplicitReturns": true,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "outDir": "out",
-      "types": []
+        "target": "es2017",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "types": []
     },
-    "include": [
-      "src/**/*.ts", "JiraLinkApp.ts", "test/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules/**/*"
-    ]
-  }
+    "include": ["**/*.ts"]
+}
 
 //     target: ts.ScriptTarget.ES2017,
 //     module: ts.ModuleKind.CommonJS,
