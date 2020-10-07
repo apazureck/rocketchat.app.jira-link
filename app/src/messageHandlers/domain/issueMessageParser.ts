@@ -1,7 +1,16 @@
-import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
-import { settingFilterRegex, settingRegex } from "../../configuration/configuration";
+import {
+    ILogger,
+    ISettingRead,
+} from "@rocket.chat/apps-engine/definition/accessors";
+import {
+    settingFilterRegex,
+    settingRegex,
+} from "../../configuration/configuration";
 import { IJiraIssueProvider } from "../../definition/jiraConnection";
-import { IFoundIssue, IJiraIssueMessageParser } from "../../definition/messageHandling";
+import {
+    IFoundIssue,
+    IJiraIssueMessageParser,
+} from "../../definition/messageHandling";
 
 export class IssueMessageParser implements IJiraIssueMessageParser {
     /**
@@ -21,13 +30,19 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
 
         let foundMatch: RegExpExecArray | null;
 
-        const filterRegex = new RegExp(await this.settings.getValueById(settingFilterRegex), "gm");
+        const filterRegex = new RegExp(
+            await this.settings.getValueById(settingFilterRegex),
+            "gm"
+        );
         const filteredText = messageText.replace(filterRegex, "");
 
-        const searchIssueRegex = new RegExp(await this.settings.getValueById(settingRegex), "gm");
+        const searchIssueRegex = new RegExp(
+            await this.settings.getValueById(settingRegex),
+            "gm"
+        );
         // tslint:disable-next-line: no-conditional-assignment
-        while (foundMatch = searchIssueRegex.exec(filteredText)) {
-            const issueId = foundMatch.pop();
+        while ((foundMatch = searchIssueRegex.exec(filteredText))) {
+            const issueId = foundMatch[foundMatch.length - 1];
 
             if (!issueId) {
                 continue;
@@ -39,8 +54,6 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
             if (!issue) {
                 continue;
             }
-
-            this.logger.debug("Found matching issue on JIRA sever", issue);
 
             foundIssues.push({
                 issue,

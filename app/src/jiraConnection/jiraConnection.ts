@@ -24,12 +24,14 @@ export class JiraConnection implements IJiraConnection {
         private logger: ILogger,
         private http: IHttp,
         private jira: IJiraAccess
-    ) {}
+    ) {
+        logger.debug("Creating Jira Conection", jira);
+    }
 
     public async request<T>(url: string): Promise<T> {
         await this.loginIfNoSessionCookieIsSet();
 
-        return await this.requestFromServer<T>(url);
+        return await this.requestGetFromServer<T>(url);
     }
 
     private async loginIfNoSessionCookieIsSet(): Promise<void> {
@@ -38,7 +40,7 @@ export class JiraConnection implements IJiraConnection {
         }
     }
 
-    private async requestFromServer<T>(relativeUrl: string): Promise<T> {
+    private async requestGetFromServer<T>(relativeUrl: string): Promise<T> {
         let response: IHttpResponse;
         let retry = false;
 
@@ -64,13 +66,14 @@ export class JiraConnection implements IJiraConnection {
     }
 
     private createFullUrl(relativeUrl: string): string {
-        return this.jira.serverUrl + relativeUrl.startsWith("/")
-            ? relativeUrl
-            : "/" + relativeUrl;
+        return this.jira.serverUrl + (relativeUrl.startsWith("/")
+            ? relativeUrl.substring(1)
+            : relativeUrl);
     }
 
     private performGetRequest(relativeUrl: string): Promise<IHttpResponse> {
         const absoluteUrl = this.createFullUrl(relativeUrl);
+        this.logger.debug("Requesting from url", absoluteUrl);
         this.logger.debug(
             "Requesting " + absoluteUrl,
             "Using session cookie: " + this.sessionCookie
@@ -101,7 +104,9 @@ export class JiraConnection implements IJiraConnection {
     }
 
     private requestLogin(): Promise<IHttpResponse> {
-        return this.http.post(this.serverUrl + "/rest/auth/1/session", {
+        const absoluteUrl = this.createFullUrl("/rest/auth/1/session");
+        this.logger.debug("Requesting login from url", absoluteUrl);
+        return this.http.post(absoluteUrl, {
             data: {
                 username: this.jira.username,
                 password: this.jira.password,
