@@ -2,9 +2,9 @@ import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/acces
 import { expect } from "chai";
 import "mocha";
 import { It, Mock } from "typemoq";
-import { settingFilterRegex, settingRegex } from "../../../src/configuration/configuration";
-import { IJiraIssue, IJiraIssueProvider } from "../../../src/definition/jiraConnection";
-import { IssueMessageParser } from "../../../src/messageHandlers/domain/issueMessageParser";
+import { settingFilterRegex, settingRegex } from "../../../app/src/configuration/configuration";
+import { IJiraIssue, IJiraIssueProvider } from "../../../app/src/definition/jiraConnection";
+import { IssueMessageParser } from "../../../app/src/messageHandlers/domain/issueMessageParser";
 
 const defaultRegex = /\b\w+-\d+\b/gm;
 const filterRegex = /\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)/gm;
@@ -25,7 +25,8 @@ describe("Tests for message parser", () => {
 
         jipMock.setup(jip => jip.getIssue(It.is(v => v === issuekey))).returns(async () => {
             return {
-                key: issuekey
+                key: issuekey,
+                fields: {}
             } as IJiraIssue;
         });
 
@@ -53,17 +54,20 @@ describe("Tests for message parser", () => {
 
         jipMock.setup(jip => jip.getIssue(issuekey1)).returns(async () => {
             return {
-                key: issuekey1
+                key: issuekey1,
+                fields: {}
             } as IJiraIssue;
         });
         jipMock.setup(jip => jip.getIssue(issuekey2)).returns(async () => {
             return {
-                key: issuekey2
+                key: issuekey2,
+                fields: {}
             } as IJiraIssue;
         });
         jipMock.setup(jip => jip.getIssue(issuekey3)).returns(async () => {
             return {
-                key: issuekey3
+                key: issuekey3,
+                fields: {}
             } as IJiraIssue;
         });
 
@@ -91,12 +95,14 @@ describe("Tests for message parser", () => {
 
         jipMock.setup(jip => jip.getIssue(issuekey1)).returns(async () => {
             return {
-                key: issuekey1
+                key: issuekey1,
+                fields: {}
             } as IJiraIssue;
         });
         jipMock.setup(jip => jip.getIssue(issuekey2)).returns(async () => {
             return {
-                key: issuekey2
+                key: issuekey2,
+                fields: {}
             } as IJiraIssue;
         });
 

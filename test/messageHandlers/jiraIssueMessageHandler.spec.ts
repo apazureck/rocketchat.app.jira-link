@@ -4,17 +4,16 @@ import {
     ISettingRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
-import { expect } from "chai";
 import "mocha";
 import { It, Mock, Times } from "typemoq";
-import { settingAddAttachments } from "../../src/configuration/configuration";
+import { settingAddAttachments } from "../../app/src/configuration/configuration";
 import {
     IAttachmentCreator,
     IFoundIssue,
     IIssueReplacer,
     IJiraIssueMessageParser,
-} from "../../src/definition/messageHandling";
-import { JiraIssueMessageHandler } from "../../src/messageHandlers/JiraIssueMessageHandler";
+} from "../../app/src/definition/messageHandling";
+import { JiraIssueMessageHandler } from "../../app/src/messageHandlers/JiraIssueMessageHandler";
 
 describe("Jira Issue Message Handler Tests", () => {
     const loggerMock = Mock.ofType<ILogger>();

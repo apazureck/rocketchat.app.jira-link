@@ -4,9 +4,9 @@ import { ILogger } from "@rocket.chat/apps-engine/definition/accessors";
 import { expect } from "chai";
 import "mocha";
 import { Mock } from "typemoq";
-import { IJiraIssue, ISearchResult } from "../../src/definition/jiraConnection";
-import { JiraConnection } from "../../src/jiraConnection/jiraConnection";
-import { ISSUE_URL_PREFIX, JiraIssueProvider } from "../../src/jiraConnection/jiraIssueProvider";
+import { IJiraIssue, ISearchResult } from "../../app/src/definition/jiraConnection";
+import { JiraConnection } from "../../app/src/jiraConnection/jiraConnection";
+import { ISSUE_URL_PREFIX, JiraIssueProvider } from "../../app/src/jiraConnection/jiraIssueProvider";
 
 describe("Jira Issue Provider Tests", () => {
     it("Failed request should return undefined", async () => {

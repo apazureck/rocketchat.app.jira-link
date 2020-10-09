@@ -39,15 +39,16 @@ export class JiraIssueMessageHandler {
     }
 
     private async addAttachmentsIsActivated(): Promise<boolean> {
-        return ((await this.settings.getValueById(settingAddAttachments)) === true
-        );
+        const addAttachments = await this.settings.getValueById(settingAddAttachments) as boolean;
+        this.logger.debug("Should add attachments", addAttachments);
+        return addAttachments === true;
     }
 
     private createAttachmentLinks(
         foundIssues: Array<IFoundIssue>,
         builder: IMessageBuilder
     ) {
-        this.logger.debug("Attachments", builder.getAttachments());
+        this.logger.debug("Attachments alreadey on message", builder.getAttachments());
         builder.setAttachments(foundIssues.map(i => this.attachmentCreator.createAttachment(i)));
     }
 

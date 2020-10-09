@@ -51,7 +51,7 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
             this.logger.debug("Found issue", issueId);
             const issue = await this.issuer.getIssue(issueId);
 
-            if (!issue) {
+            if (!issue || !issue.fields) {
                 continue;
             }
 

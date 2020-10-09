@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import "mocha";
-import { IJiraIssue } from "../../../src/definition/jiraConnection";
-import { IFoundIssue } from "../../../src/definition/messageHandling";
-import { AttachmentCreator } from "../../../src/messageHandlers/domain/attachmentCreator";
+import { IJiraIssue } from "../../../app/src/definition/jiraConnection";
+import { IFoundIssue } from "../../../app/src/definition/messageHandling";
+import { AttachmentCreator } from "../../../app/src/messageHandlers/domain/attachmentCreator";
 
 describe("Tests for attachment generation", () => {
     it("Correct Issue should create attachment", () => {

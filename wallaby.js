@@ -5,8 +5,8 @@ module.exports = function (w) {
 
     return {
       files: [
-        'src/**/*.ts',
-        "JiraLinkApp.ts"
+        'app/src/**/*.ts',
+        "app/JiraLinkApp.ts"
       ],
 
       tests: [

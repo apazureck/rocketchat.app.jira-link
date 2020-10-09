@@ -11,7 +11,7 @@ import { IMock, It, Mock, Times } from "typemoq";
 import {
     IJiraAccess,
     JiraConnection,
-} from "../../src/jiraConnection/jiraConnection";
+} from "../../app/src/jiraConnection/jiraConnection";
 
 const loginurl = "server/rest/auth/1/session";
 
@@ -20,7 +20,7 @@ describe("JiraConnection login tests", () => {
     const loggerMock = Mock.ofType<ILogger>();
     const httpMock = Mock.ofType<IHttp>();
     const jiraAccess: IJiraAccess = {
-        serverUrl: "server",
+        serverUrl: "server/",
         password: "password",
         username: "user",
     };

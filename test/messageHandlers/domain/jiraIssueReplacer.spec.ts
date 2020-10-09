@@ -2,11 +2,11 @@
 
 import { expect } from "chai";
 import "mocha";
-import { IJiraIssue } from "../../../src/definition/jiraConnection";
+import { IJiraIssue } from "../../../app/src/definition/jiraConnection";
 import {
     IFoundIssue,
-} from "../../../src/definition/messageHandling";
-import { IssueReplacer, replaceInTextByIndexAndLength } from "../../../src/messageHandlers/domain/issueReplacer";
+} from "../../../app/src/definition/messageHandling";
+import { IssueReplacer, replaceInTextByIndexAndLength } from "../../../app/src/messageHandlers/domain/issueReplacer";
 
 describe("Tests for issue replacement", () => {
     it("Correct Issue should be replaced", () => {
@@ -97,7 +97,7 @@ function createFoundIssue(
                     status: { name: "statusName" },
                 },
             },
-        });
+        } as any);
     }
 
     return retarray;
