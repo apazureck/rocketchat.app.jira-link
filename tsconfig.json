@@ -12,7 +12,6 @@
       "experimentalDecorators": true,
       "outDir": "out",
       "skipLibCheck": true,
-      "noEmit": true,
       "types": []
     },
     "include": [

@@ -116,4 +116,39 @@ describe("Tests for message parser", () => {
 
         expect(result.length).equals(1);
     });
+
+    it("Replacement location should be correct", async () => {
+        // Arrange
+
+        const issuekey1 = "ISSUE-123";
+        const issuekey2 = "ISSUE-254";
+
+        const testmessage = `[ISSUE-123](/ISSUE-123), and ISSUE-254 please`;
+
+        const jipMock = Mock.ofType<IJiraIssueProvider>();
+        const loggerMock = Mock.ofType<ILogger>();
+
+        jipMock.setup(jip => jip.getIssue(issuekey1)).returns(async () => {
+            return {
+                key: issuekey1,
+                fields: {}
+            } as IJiraIssue;
+        });
+        jipMock.setup(jip => jip.getIssue(issuekey2)).returns(async () => {
+            return {
+                key: issuekey2,
+                fields: {}
+            } as IJiraIssue;
+        });
+
+        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, settingsMock.object);
+
+        // Act
+
+        const result = await cut.getIssuesFromMessage(testmessage);
+
+        // Assert
+
+        expect(result[0].foundMatch.index).equals(29);
+    });
 });

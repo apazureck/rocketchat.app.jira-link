@@ -11,6 +11,7 @@ import {
     IFoundIssue,
     IJiraIssueMessageParser,
 } from "../../definition/messageHandling";
+import { replaceInTextByIndexAndLength } from "./issueReplacer";
 
 export class IssueMessageParser implements IJiraIssueMessageParser {
     /**
@@ -30,11 +31,7 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
 
         let foundMatch: RegExpExecArray | null;
 
-        const filterRegex = new RegExp(
-            await this.settings.getValueById(settingFilterRegex),
-            "gm"
-        );
-        const filteredText = messageText.replace(filterRegex, "");
+        const filteredText = await this.filterText(messageText);
 
         const searchIssueRegex = new RegExp(
             await this.settings.getValueById(settingRegex),
@@ -62,5 +59,18 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
             });
         }
         return foundIssues;
+    }
+
+    private async filterText(messageText: string) {
+        const filterRegex = new RegExp(
+            await this.settings.getValueById(settingFilterRegex),
+            "gm"
+        );
+        let filteredText = messageText;
+        let match: RegExpExecArray | null;
+        while ((match = filterRegex.exec(messageText)) !== null) {
+            filteredText = replaceInTextByIndexAndLength(filteredText, " ".repeat(match[0].length), match.index, match[0].length);
+        }
+        return filteredText;
     }
 }

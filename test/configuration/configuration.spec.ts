@@ -1,5 +1,4 @@
-import { IConfigurationExtend, IEnvironmentRead, ISettingsExtend } from "@rocket.chat/apps-engine/definition/accessors";
-import { config, expect } from "chai";
+import { ISettingsExtend } from "@rocket.chat/apps-engine/definition/accessors";
 import "mocha";
 import { Mock } from "typemoq";
 import { extendConfiguration } from "../../app/src/configuration/configuration";
