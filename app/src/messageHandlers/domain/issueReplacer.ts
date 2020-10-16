@@ -27,5 +27,5 @@ export class IssueReplacer implements IIssueReplacer {
  * @return {*}  {string} The result string
  */
 export function replaceInTextByIndexAndLength(text: string, replacement: string, startIndex: number, length: number): string {
-    return text.replace(new RegExp("^(.{" + startIndex + "}).{" + length + "}"), "$1" + replacement);
+    return text.replace(new RegExp("^(.{" + startIndex + "}).{" + length + "}", "s"), "$1" + replacement);
 }

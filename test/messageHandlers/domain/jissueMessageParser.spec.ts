@@ -184,4 +184,28 @@ describe("Tests for message parser", () => {
 
         expect(result.length).to.equal(1);
     });
+
+    it("Replace issues after code blocks", async () => {
+        const testmessage = "LDRRS-123\n```LDRRS-123```\n\nLDRRS-123";
+
+        const jipMock = Mock.ofType<IJiraIssueProvider>();
+        const loggerMock = Mock.ofType<ILogger>();
+
+        jipMock.setup(jip => jip.getIssue("LDRRS-123")).returns(async () => {
+            return {
+                key: "LDRRS-123",
+                fields: {}
+            } as IJiraIssue;
+        });
+
+        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, settingsMock.object);
+
+        // Act
+
+        const result = await cut.getIssuesFromMessage(testmessage);
+
+        // Assert
+
+        expect(result.length).to.equal(2);
+    });
 });
