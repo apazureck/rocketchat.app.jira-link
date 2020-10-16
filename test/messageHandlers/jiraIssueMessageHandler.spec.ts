@@ -6,7 +6,7 @@ import {
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 import "mocha";
 import { It, Mock, Times } from "typemoq";
-import { settingAddAttachments } from "../../app/src/configuration/configuration";
+import { SETTINGS } from "../../app/src/configuration/configuration";
 import {
     IAttachmentCreator,
     IFoundIssue,
@@ -154,7 +154,7 @@ describe("Jira Issue Message Handler Tests", () => {
             .returns(() => output);
 
         settingsMock
-            .setup((s) => s.getValueById(settingAddAttachments))
+            .setup((s) => s.getValueById(SETTINGS.addAttachments))
             .returns(async () => true);
 
         const cut = new JiraIssueMessageHandler(

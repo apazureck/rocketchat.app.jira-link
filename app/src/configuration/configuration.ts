@@ -4,12 +4,19 @@ import {
     ISettingsExtend
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { SettingType } from "@rocket.chat/apps-engine/definition/settings";
-export const settingJiraServerAddress = "jira-link-server-address";
-export const settingJiraUserName = "jira-link-username";
-export const settingJiraPassword = "jira-link-password";
-export const settingRegex = "jira-link-regex";
-export const settingAddAttachments = "jira-link-add-attachments";
-export const settingFilterRegex = "jira-link-filter-regex";
+
+export const SETTINGS = {
+    jiraServerAddress: "jira-link-server-address",
+    jiraUserName: "jira-link-username",
+    jiraPassword: "jira-link-password",
+    regex: "jira-link-regex",
+    addAttachments: "jira-link-add-attachments",
+    filterRegex: "jira-link-filter-regex",
+    DEFAULTS: {
+        filterRegex: /(\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)|```.*?```|`.*?`)/gm,
+        regex: /\b\w+-\d+\b/gm,
+    }
+} as const;
 
 const sectionConnection = "Connection Settings";
 const sectionAttachments = "Attachments";
@@ -20,74 +27,82 @@ export function extendConfiguration(
     /// Server Settings
     settings.provideSetting({
         section: sectionConnection,
-        id: settingJiraServerAddress,
+        id: SETTINGS.jiraServerAddress,
         packageValue: "",
         public: false,
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: settingJiraServerAddress + "-label",
-        i18nDescription: settingJiraServerAddress + "-description",
+        i18nLabel: label(SETTINGS.jiraServerAddress),
+        i18nDescription: description(SETTINGS.jiraServerAddress),
         i18nPlaceholder: "http://localhost:5000"
     });
     settings.provideSetting({
         section: sectionConnection,
-        id: settingJiraUserName,
+        id: SETTINGS.jiraUserName,
         packageValue: "",
         public: false,
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: settingJiraUserName + "-label",
-        i18nDescription: settingJiraUserName + "-description",
+        i18nLabel: label(SETTINGS.jiraUserName),
+        i18nDescription: description(SETTINGS.jiraUserName),
         i18nPlaceholder: "John Doe"
     });
     settings.provideSetting({
         section: sectionConnection,
-        id: settingJiraPassword,
+        id: SETTINGS.jiraPassword,
         packageValue: "",
         public: false,
         type: SettingType.STRING,
         multiline: false,
         required: true,
-        i18nLabel: settingJiraPassword + "-label",
-        i18nDescription: settingJiraPassword + "-description",
+        i18nLabel: label(SETTINGS.jiraPassword),
+        i18nDescription: description(SETTINGS.jiraPassword),
         i18nPlaceholder: "****"
     });
 
     /// Regular Expression
     settings.provideSetting({
-        id: settingRegex,
-        packageValue: "\\b\\w+-\\d+\\b",
+        id: SETTINGS.regex,
+        packageValue: SETTINGS.DEFAULTS.regex,
         public: false,
         type: SettingType.CODE,
         multiline: false,
         required: true,
-        i18nLabel: settingRegex + "-label",
-        i18nDescription: settingRegex + "-description"
+        i18nLabel: label(SETTINGS.regex),
+        i18nDescription: description(SETTINGS.regex)
     });
 
     /// Filter Regular Expression
     settings.provideSetting({
-        id: settingFilterRegex,
-        packageValue: "\\[.*?(\\w+-\\d+).*?\\]\\(.*?\\1.*?\\)",
+        id: SETTINGS.filterRegex,
+        packageValue: SETTINGS.DEFAULTS.filterRegex.source,
         public: false,
         type: SettingType.CODE,
         multiline: false,
         required: true,
-        i18nLabel: settingFilterRegex + "-label",
-        i18nDescription: settingFilterRegex + "-description"
+        i18nLabel: label(SETTINGS.filterRegex),
+        i18nDescription: description(SETTINGS.filterRegex)
     });
 
     // Attachment Settings
     settings.provideSetting({
-        id: settingAddAttachments,
+        id: SETTINGS.addAttachments,
         section: sectionAttachments,
         packageValue: true,
         public: false,
         type: SettingType.BOOLEAN,
         required: true,
-        i18nLabel: settingAddAttachments + "-label",
-        i18nDescription: settingAddAttachments + "-description"
+        i18nLabel: label(SETTINGS.addAttachments),
+        i18nDescription: description(SETTINGS.addAttachments)
     });
+}
+
+function label(id: string) {
+    return id  + "-label";
+}
+
+function description(id: string) {
+    return id + "-description";
 }

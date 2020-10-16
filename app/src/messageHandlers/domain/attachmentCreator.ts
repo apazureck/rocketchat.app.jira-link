@@ -1,5 +1,5 @@
 import { IMessageAttachment, MessageActionButtonsAlignment } from "@rocket.chat/apps-engine/definition/messages";
-import { IAttachmentCreator, IFoundIssue } from "../../definition/messageHandling";
+import { IAttachmentCreator, IFoundIssue, JIRA_ISSUE_ATTACHMENT_TYPE } from "../../definition/messageHandling";
 
 /**
  *
@@ -11,12 +11,14 @@ import { IAttachmentCreator, IFoundIssue } from "../../definition/messageHandlin
 export class AttachmentCreator implements IAttachmentCreator {
     public createAttachment(i: IFoundIssue): IMessageAttachment {
         {
+            const issue = i.issue;
             return {
-                text: `**${i.issue.key}** [${i.issue.fields.summary}](${i.issue.jiraLinkBrowseAddress}) - ${i.issue.fields.status.name}`,
+                text: `**${issue.key}** [${issue.fields.summary}](${issue.jiraLinkBrowseAddress}) - ${issue.fields.status.name}`,
                 jlTag: i.issue.key,
                 color: "cyan",
                 thumbnailUrl: i.issue.fields.issuetype.iconUrl,
                 actionButtonsAlignment: MessageActionButtonsAlignment.HORIZONTAL,
+                type: JIRA_ISSUE_ATTACHMENT_TYPE
                 // actions: [
                 //     {
                 //         type: MessageActionType.BUTTON,

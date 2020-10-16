@@ -3,8 +3,7 @@ import {
     ISettingRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import {
-    settingFilterRegex,
-    settingRegex,
+    SETTINGS
 } from "../../configuration/configuration";
 import { IJiraIssueProvider } from "../../definition/jiraConnection";
 import {
@@ -34,7 +33,7 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
         const filteredText = await this.filterText(messageText);
 
         const searchIssueRegex = new RegExp(
-            await this.settings.getValueById(settingRegex),
+            await this.settings.getValueById(SETTINGS.regex),
             "gm"
         );
         // tslint:disable-next-line: no-conditional-assignment
@@ -63,7 +62,7 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
 
     private async filterText(messageText: string) {
         const filterRegex = new RegExp(
-            await this.settings.getValueById(settingFilterRegex),
+            await this.settings.getValueById(SETTINGS.filterRegex),
             "gm"
         );
         let filteredText = messageText;

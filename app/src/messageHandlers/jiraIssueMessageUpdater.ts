@@ -10,11 +10,7 @@ import {
     IMessageAttachment,
 } from "@rocket.chat/apps-engine/definition/messages";
 import {
-    settingAddAttachments,
-    settingJiraPassword,
-    settingJiraServerAddress,
-    settingJiraUserName,
-    settingRegex,
+    SETTINGS
 } from "../configuration/configuration";
 import { IAttachmentCreator, IFoundIssue } from "../definition/messageHandling";
 import { JiraConnection } from "../jiraConnection/jiraConnection";
@@ -40,16 +36,16 @@ export class JiraIssueMessageUpdater {
 
         const settings = read.getEnvironmentReader().getSettings();
         const serverAddress = await settings.getValueById(
-            settingJiraServerAddress
+            SETTINGS.jiraServerAddress
         );
 
         const foundIssues = await this.getIssuesFromMessage(
             message.text,
             http,
             serverAddress,
-            await settings.getValueById(settingJiraPassword),
-            await settings.getValueById(settingJiraUserName),
-            await settings.getValueById(settingRegex)
+            await settings.getValueById(SETTINGS.jiraPassword),
+            await settings.getValueById(SETTINGS.jiraUserName),
+            await settings.getValueById(SETTINGS.regex)
         );
 
         this.logger.debug("Found Issues:", foundIssues);
@@ -57,7 +53,7 @@ export class JiraIssueMessageUpdater {
         await this.createIssueLinks(foundIssues, builder, serverAddress);
 
         this.clearAttachments(builder);
-        if ((await settings.getValueById(settingAddAttachments)) === true) {
+        if ((await settings.getValueById(SETTINGS.addAttachments)) === true) {
             this.createAttachments(foundIssues, builder);
         }
 

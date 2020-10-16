@@ -7,9 +7,7 @@ import { expect } from "chai";
 import "mocha";
 import { It, Mock, Times } from "typemoq";
 import {
-  settingJiraPassword,
-  settingJiraServerAddress,
-  settingJiraUserName,
+  SETTINGS
 } from "../../app/src/configuration/configuration";
 import { createJiraConnection } from "../../app/src/jiraConnection/jiraConnectionFactory";
 
@@ -22,7 +20,7 @@ describe("Tests for creating jira connections", () => {
     const httpMock = Mock.ofType<IHttp>();
 
     settingsMock
-      .setup((s) => s.getValueById(settingJiraServerAddress))
+      .setup((s) => s.getValueById(SETTINGS.jiraServerAddress))
       .returns(async () => serverUrl);
 
     // Act
@@ -46,7 +44,7 @@ describe("Tests for creating jira connections", () => {
     const httpMock = Mock.ofType<IHttp>();
 
     settingsMock
-      .setup((s) => s.getValueById(settingJiraServerAddress))
+      .setup((s) => s.getValueById(SETTINGS.jiraServerAddress))
       .returns(async () => serverUrl);
 
     // Act
@@ -72,13 +70,13 @@ describe("Tests for creating jira connections", () => {
     const httpMock = Mock.ofType<IHttp>();
 
     settingsMock
-      .setup((s) => s.getValueById(settingJiraServerAddress))
+      .setup((s) => s.getValueById(SETTINGS.jiraServerAddress))
       .returns(async () => serverUrl);
     settingsMock
-      .setup((s) => s.getValueById(settingJiraPassword))
+      .setup((s) => s.getValueById(SETTINGS.jiraPassword))
       .returns(async () => password);
     settingsMock
-      .setup((s) => s.getValueById(settingJiraUserName))
+      .setup((s) => s.getValueById(SETTINGS.jiraUserName))
       .returns(async () => username);
 
     // Act

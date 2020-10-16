@@ -1,7 +1,7 @@
 import { ILogger, IMessageBuilder, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 
-import { settingAddAttachments } from "../configuration/configuration";
+import { SETTINGS } from "../configuration/configuration";
 import { IAttachmentCreator, IFoundIssue, IIssueReplacer, IJiraIssueMessageParser } from "../definition/messageHandling";
 
 export class JiraIssueMessageHandler {
@@ -39,7 +39,7 @@ export class JiraIssueMessageHandler {
     }
 
     private async addAttachmentsIsActivated(): Promise<boolean> {
-        const addAttachments = await this.settings.getValueById(settingAddAttachments) as boolean;
+        const addAttachments = await this.settings.getValueById(SETTINGS.addAttachments) as boolean;
         this.logger.debug("Should add attachments", addAttachments);
         return addAttachments === true;
     }
@@ -61,5 +61,15 @@ export class JiraIssueMessageHandler {
 
         this.messageBuilder.setText(text);
         this.messageBuilder.setParseUrls(false);
+    }
+
+    private clearAttachments(builder: IMessageBuilder) {
+        const toDelete: Array<number> = [];
+        builder.getAttachments().forEach((a, i) => {
+            if (a.type === "jira-link-attachment") {
+                toDelete.push(i);
+            }
+        });
+        toDelete.forEach((index) => builder.removeAttachment(index));
     }
 }

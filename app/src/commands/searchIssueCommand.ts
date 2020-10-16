@@ -12,9 +12,7 @@ import {
     SlashCommandPreviewItemType
 } from "@rocket.chat/apps-engine/definition/slashcommands";
 import {
-    settingJiraPassword,
-    settingJiraServerAddress,
-    settingJiraUserName,
+    SETTINGS
 } from "../configuration/configuration";
 import { JiraConnection } from "../jiraConnection/jiraConnection";
 import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
@@ -51,10 +49,10 @@ export class SearchIssueCommand implements ISlashCommand {
 
             const jc = new JiraConnection(logger, http, {
                 serverUrl: await settings.getValueById(
-                    settingJiraServerAddress
+                    SETTINGS.jiraServerAddress
                 ),
-                password: await settings.getValueById(settingJiraPassword),
-                username: await settings.getValueById(settingJiraUserName)
+                password: await settings.getValueById(SETTINGS.jiraPassword),
+                username: await settings.getValueById(SETTINGS.jiraUserName)
             });
 
             const search = new JiraIssueProvider(

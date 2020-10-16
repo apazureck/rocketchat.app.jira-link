@@ -2,16 +2,13 @@ import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/acces
 import { expect } from "chai";
 import "mocha";
 import { It, Mock } from "typemoq";
-import { settingFilterRegex, settingRegex } from "../../../app/src/configuration/configuration";
+import { SETTINGS } from "../../../app/src/configuration/configuration";
 import { IJiraIssue, IJiraIssueProvider } from "../../../app/src/definition/jiraConnection";
 import { IssueMessageParser } from "../../../app/src/messageHandlers/domain/issueMessageParser";
 
-const defaultRegex = /\b\w+-\d+\b/gm;
-const filterRegex = /\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)/gm;
-
 const settingsMock = Mock.ofType<ISettingRead>();
-settingsMock.setup(s => s.getValueById(settingRegex)).returns(async () => defaultRegex.source);
-settingsMock.setup(s => s.getValueById(settingFilterRegex)).returns(async () => filterRegex.source);
+settingsMock.setup(s => s.getValueById(SETTINGS.regex)).returns(async () => SETTINGS.DEFAULTS.regex.source);
+settingsMock.setup(s => s.getValueById(SETTINGS.filterRegex)).returns(async () => SETTINGS.DEFAULTS.filterRegex.source);
 
 describe("Tests for message parser", () => {
     it("find issue from simple text", async () => {
@@ -150,5 +147,41 @@ describe("Tests for message parser", () => {
         // Assert
 
         expect(result[0].foundMatch.index).equals(29);
+    });
+
+    it("No replacement in code blocks", async () => {
+
+        // Arrange
+
+        const issuekey1 = "ISSUE-123";
+        const issuekey2 = "ISSUE-254";
+
+        const testmessage = " ``` Ingore " + issuekey1 + " ``` in this and ` " + issuekey2 + "`, but replace " + issuekey2 + "`, please.";
+
+        const jipMock = Mock.ofType<IJiraIssueProvider>();
+        const loggerMock = Mock.ofType<ILogger>();
+
+        jipMock.setup(jip => jip.getIssue(issuekey1)).returns(async () => {
+            return {
+                key: issuekey1,
+                fields: {}
+            } as IJiraIssue;
+        });
+        jipMock.setup(jip => jip.getIssue(issuekey2)).returns(async () => {
+            return {
+                key: issuekey2,
+                fields: {}
+            } as IJiraIssue;
+        });
+
+        const cut = new IssueMessageParser(jipMock.object, loggerMock.object, settingsMock.object);
+
+        // Act
+
+        const result = await cut.getIssuesFromMessage(testmessage);
+
+        // Assert
+
+        expect(result.length).to.equal(1);
     });
 });
