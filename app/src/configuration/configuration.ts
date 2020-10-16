@@ -1,22 +1,24 @@
+// tslint:disable: max-classes-per-file
+
 import {
-    IConfigurationExtend,
-    IEnvironmentRead,
     ISettingsExtend
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { SettingType } from "@rocket.chat/apps-engine/definition/settings";
 
-export const SETTINGS = {
-    jiraServerAddress: "jira-link-server-address",
-    jiraUserName: "jira-link-username",
-    jiraPassword: "jira-link-password",
-    regex: "jira-link-regex",
-    addAttachments: "jira-link-add-attachments",
-    filterRegex: "jira-link-filter-regex",
-    DEFAULTS: {
-        filterRegex: /(\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)|```.*?```|`.*?`)/gm,
-        regex: /\b\w+-\d+\b/gm,
-    }
-} as const;
+export class SETTINGS {
+    public static get jiraServerAddress(): string { return "jira-link-server-address"; }
+    public static get jiraUserName(): string { return "jira-link-username"; }
+    public static get jiraPassword(): string { return "jira-link-password"; }
+    public static get regex(): string { return "jira-link-regex"; }
+    public static get addAttachments(): string { return "jira-link-add-attachments"; }
+    public static get filterRegex(): string { return "jira-link-filter-regex"; }
+    public static get DEFAULTS(): SettingsDefaults { return new SettingsDefaults(); }
+}
+
+class SettingsDefaults {
+    public get filterRegex(): RegExp { return /(\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)|```.*?```|`.*?`)/gm; }
+    public get regex(): RegExp { return /\b\w+-\d+\b/gm; }
+}
 
 const sectionConnection = "Connection Settings";
 const sectionAttachments = "Attachments";

@@ -178,6 +178,6 @@ describe("Jira Issue Message Handler Tests", () => {
         );
 
         messageBuilderMock.verify((mb) => mb.setText(output), Times.once());
-        attachmentCreatorMock.verify(ac => ac.createAttachment(It.isAny()), Times.once());
+        attachmentCreatorMock.verify(ac => ac.createDistinctAttachments(It.isAny()), Times.once());
     });
 });

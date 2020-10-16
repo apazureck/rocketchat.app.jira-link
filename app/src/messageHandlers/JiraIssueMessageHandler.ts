@@ -49,7 +49,7 @@ export class JiraIssueMessageHandler {
         builder: IMessageBuilder
     ) {
         this.logger.debug("Attachments alreadey on message", builder.getAttachments());
-        builder.setAttachments(foundIssues.map(i => this.attachmentCreator.createAttachment(i)));
+        builder.setAttachments(this.attachmentCreator.createDistinctAttachments(foundIssues));
     }
 
     private async createIssueLinks(
