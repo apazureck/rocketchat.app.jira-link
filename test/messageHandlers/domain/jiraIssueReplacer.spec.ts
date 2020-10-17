@@ -4,6 +4,7 @@ import { ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
 import { expect } from "chai";
 import "mocha";
 import { Mock } from "typemoq";
+import { SETTINGS } from "../../../app/src/configuration/configuration";
 import { IJiraIssue } from "../../../app/src/definition/jiraConnection";
 import {
     IFoundIssue,
@@ -13,6 +14,7 @@ import { IssueReplacer, replaceInTextByIndexAndLength } from "../../../app/src/m
 describe("Tests for issue replacement", async () => {
     
     const settingsMock = Mock.ofType<ISettingRead>();
+    settingsMock.setup(s => s.getValueById(SETTINGS.replaceIssueIdsWithLinks)).returns(async () => true);
     const settings = settingsMock.object;
 
     it("Correct Issue should be replaced", async () => {
