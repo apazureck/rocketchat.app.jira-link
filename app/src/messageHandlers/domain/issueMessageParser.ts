@@ -12,6 +12,10 @@ import {
 } from "../../definition/messageHandling";
 import { replaceInTextByIndexAndLength } from "./issueReplacer";
 
+interface GroupsArray extends RegExpExecArray {
+    groups: { [key: string]: string }
+}
+
 export class IssueMessageParser implements IJiraIssueMessageParser {
     /**
      *
@@ -28,7 +32,7 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
 
         const foundIssues: Array<IFoundIssue> = [];
 
-        let foundMatch: RegExpExecArray | null;
+        let foundMatch: GroupsArray | null;
 
         const filteredText = await this.filterText(messageText);
 
@@ -37,8 +41,8 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
             "gm"
         );
         // tslint:disable-next-line: no-conditional-assignment
-        while ((foundMatch = searchIssueRegex.exec(filteredText))) {
-            const issueId = foundMatch[foundMatch.length - 1];
+        while ((foundMatch = searchIssueRegex.exec(filteredText) as any)) {
+            const issueId = findValueByPrefix(foundMatch.groups, "issue");
 
             if (!issueId) {
                 continue;
@@ -73,3 +77,13 @@ export class IssueMessageParser implements IJiraIssueMessageParser {
         return filteredText;
     }
 }
+
+function findValueByPrefix(object: {}, prefix: string) {
+    for (const property in object) {
+      if (object[property] &&
+         property.toString().startsWith(prefix)) {
+         return object[property];
+      }
+    }
+    return undefined;
+  }

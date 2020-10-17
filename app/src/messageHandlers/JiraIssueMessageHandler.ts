@@ -19,15 +19,20 @@ export class JiraIssueMessageHandler {
     ) {}
 
     public async replaceIssuesInMessage(): Promise<IMessage> {
+        this.logger.info("Handling Jira Issues");
+
         if (!this.messageText) {
+            this.logger.error("No Message text was set");
             return this.messageBuilder.getMessage();
         }
 
-        this.logger.debug("Message Text", this.messageText);
+        this.logger.debug("Message", this.messageBuilder.getMessage());
 
         const foundIssues = await this.messageparser.getIssuesFromMessage(
             this.messageText
         );
+
+        this.logger.debug("Found issues", foundIssues);
 
         await this.createIssueLinks(foundIssues);
 
@@ -48,7 +53,7 @@ export class JiraIssueMessageHandler {
         foundIssues: Array<IFoundIssue>,
         builder: IMessageBuilder
     ) {
-        this.logger.debug("Attachments alreadey on message", builder.getAttachments());
+        this.logger.debug("Attachments already on message", builder.getAttachments());
         builder.setAttachments(this.attachmentCreator.createDistinctAttachments(foundIssues));
     }
 
@@ -57,10 +62,14 @@ export class JiraIssueMessageHandler {
     ): Promise<void> {
         let text = this.messageBuilder.getText();
 
+        this.logger.debug("Replacing text", text);
+
         text = await this.issueReplacer.replaceIssues(foundIssues, text);
 
+        this.logger.debug("Replaced text", text);
+
         this.messageBuilder.setText(text);
-        this.messageBuilder.setParseUrls(false);
+        // this.messageBuilder.setParseUrls(false);
     }
 
     private clearAttachments(builder: IMessageBuilder) {

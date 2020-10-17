@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "deploy to rc server",
+            "label": "update extension on test rc server",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -19,6 +19,21 @@
                 "-p=123",
                 "-u=hans",
                 "--update",
+                "--url=http://localhost:3000"
+            ],
+            "dependsOn": ["npm install missing app dependencies"]
+        },
+        {
+            "label": "install extension on rc server",
+            "type": "shell",
+            "command": "rc-apps",
+            "options": {
+                "cwd": "./app"
+            },
+            "args": [
+                "deploy",
+                "-p=123",
+                "-u=hans",
                 "--url=http://localhost:3000"
             ],
             "dependsOn": ["npm install missing app dependencies"]

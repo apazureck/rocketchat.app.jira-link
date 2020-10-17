@@ -23,32 +23,12 @@ import { AttachmentCreator } from "./src/messageHandlers/domain/attachmentCreato
 import { IssueMessageParser } from "./src/messageHandlers/domain/issueMessageParser";
 import { IssueReplacer } from "./src/messageHandlers/domain/issueReplacer";
 import { JiraIssueMessageHandler } from "./src/messageHandlers/JiraIssueMessageHandler";
-import { JiraIssueMessageUpdater } from "./src/messageHandlers/jiraIssueMessageUpdater";
 import {ILogProvider} from "./src/types/ilogprovider";
 
 export class JiraLinkApp extends App
     implements IPreMessageSentModify, IPreMessageUpdatedModify, ILogProvider {
     constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
         super(info, logger, accessors);
-    }
-
-    public executePreMessageUpdatedModify(
-        message: IMessage,
-        builder: IMessageBuilder,
-        read: IRead,
-        http: IHttp,
-        persistence: IPersistence
-    ): Promise<IMessage> {
-        return new JiraIssueMessageUpdater(
-            this.getLogger(),
-            new AttachmentCreator()
-        ).executePreMessageUpdatedModify(
-            message,
-            read,
-            http,
-            persistence,
-            builder
-        );
     }
 
     public async initialize(
@@ -60,6 +40,16 @@ export class JiraLinkApp extends App
         this.getLogger().log("Jira Link started");
     }
 
+    public async executePreMessageUpdatedModify(
+        message: IMessage,
+        builder: IMessageBuilder,
+        read: IRead,
+        http: IHttp,
+        persistence: IPersistence
+    ): Promise<IMessage> {
+        return await this.HandleMessage(http, read, builder);
+    }
+
     public async executePreMessageSentModify(
         message: IMessage,
         builder: IMessageBuilder,
@@ -67,20 +57,7 @@ export class JiraLinkApp extends App
         http: IHttp,
         persistence: IPersistence
     ): Promise<IMessage> {
-
-        const jiraConnection = await createJiraConnection(this.getLogger(), http, read.getEnvironmentReader().getSettings());
-        const jiraIssueProvider = new JiraIssueProvider(jiraConnection, this.getLogger());
-        const messageParser = new IssueMessageParser(jiraIssueProvider, this.getLogger(), read.getEnvironmentReader().getSettings());
-        const issueReplacer = new IssueReplacer(read.getEnvironmentReader().getSettings());
-
-        return new JiraIssueMessageHandler(
-            this.getLogger(),
-            read.getEnvironmentReader().getSettings(),
-            messageParser,
-            builder,
-            issueReplacer,
-            new AttachmentCreator()
-        ).replaceIssuesInMessage();
+        return await this.HandleMessage(http, read, builder);
     }
 
     protected async extendConfiguration(
@@ -88,5 +65,21 @@ export class JiraLinkApp extends App
         environmentRead: IEnvironmentRead
     ): Promise<void> {
         extendConfiguration(configuration.settings);
+    }
+
+    private async HandleMessage(http: IHttp, read: IRead, builder: IMessageBuilder): Promise<IMessage> {
+        const jiraConnection = await createJiraConnection(this.getLogger(), http, read.getEnvironmentReader().getSettings());
+        const jiraIssueProvider = new JiraIssueProvider(jiraConnection, this.getLogger());
+        const messageParser = new IssueMessageParser(jiraIssueProvider, this.getLogger(), read.getEnvironmentReader().getSettings());
+        const issueReplacer = new IssueReplacer(read.getEnvironmentReader().getSettings(), this.getLogger());
+
+        return await new JiraIssueMessageHandler(
+            this.getLogger(),
+            read.getEnvironmentReader().getSettings(),
+            messageParser,
+            builder,
+            issueReplacer,
+            new AttachmentCreator()
+        ).replaceIssuesInMessage();
     }
 }

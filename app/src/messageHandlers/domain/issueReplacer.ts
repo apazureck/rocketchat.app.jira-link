@@ -1,4 +1,4 @@
-import { ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
+import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
 import { SETTINGS } from "../../configuration/configuration";
 import { IJiraIssue } from "../../definition/jiraConnection";
 import { IFoundIssue, IIssueReplacer } from "../../definition/messageHandling";
@@ -7,7 +7,7 @@ export class IssueReplacer implements IIssueReplacer {
     /**
      *
      */
-    constructor(private settings: ISettingRead) {}
+    constructor(private settings: ISettingRead, private logger: ILogger) {}
     public callback: (issue: IJiraIssue) => string = (issue) =>
         `[${issue.key}](${issue.jiraLinkBrowseAddress})`;
 
@@ -15,7 +15,9 @@ export class IssueReplacer implements IIssueReplacer {
         foundIssues: Array<IFoundIssue>,
         text: string
     ): Promise<string> {
-        if (!((await this.settings.getValueById(SETTINGS.replaceIssueIdsWithLinks)) as boolean)) {
+        const shouldreplace: boolean = await this.settings.getValueById(SETTINGS.replaceIssueIdsWithLinks);
+        this.logger.debug("Replace issue ids with links", shouldreplace)
+        if (!shouldreplace) {
             return text;
         }
 

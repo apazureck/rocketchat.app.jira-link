@@ -1,6 +1,6 @@
 // tslint:disable:no-unused-expression
 
-import { ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
+import { ILogger, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
 import { expect } from "chai";
 import "mocha";
 import { Mock } from "typemoq";
@@ -16,6 +16,7 @@ describe("Tests for issue replacement", async () => {
     const settingsMock = Mock.ofType<ISettingRead>();
     settingsMock.setup(s => s.getValueById(SETTINGS.replaceIssueIdsWithLinks)).returns(async () => true);
     const settings = settingsMock.object;
+    const logger = Mock.ofType<ILogger>().object;
 
     it("Correct Issue should be replaced", async () => {
         // Arrange
@@ -24,7 +25,7 @@ describe("Tests for issue replacement", async () => {
         const issueRegex = /ISSUE-123(?=\s)/gm;
         const foundIssues = createFoundIssue({ key: issueKey, match: issueRegex.exec(text) as RegExpExecArray });
 
-        const cut = new IssueReplacer(settings);
+        const cut = new IssueReplacer(settings, logger);
         cut.callback = (issue: IJiraIssue) => "REPLACED!";
 
         // Act
@@ -53,7 +54,7 @@ describe("Tests for issue replacement", async () => {
             match: issueRegex.exec(text) as RegExpExecArray
         });
 
-        const cut = new IssueReplacer(settings);
+        const cut = new IssueReplacer(settings, logger);
         cut.callback = (issue: IJiraIssue) => replaced;
 
         // Act

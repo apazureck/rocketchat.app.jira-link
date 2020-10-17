@@ -20,7 +20,7 @@ describe("Tests for message parser", () => {
         const jipMock = Mock.ofType<IJiraIssueProvider>();
         const loggerMock = Mock.ofType<ILogger>();
 
-        jipMock.setup(jip => jip.getIssue(It.is(v => v === issuekey))).returns(async () => {
+        jipMock.setup(jip => jip.getIssue(issuekey)).returns(async () => {
             return {
                 key: issuekey,
                 fields: {}
