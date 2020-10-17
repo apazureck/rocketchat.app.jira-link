@@ -108,7 +108,7 @@ describe("Jira Issue Message Handler Tests", () => {
 
         issueReplacerMock
             .setup((ir) => ir.replaceIssues(It.isAny(), input))
-            .returns(() => output);
+            .returns(async () => output);
 
         const cut = new JiraIssueMessageHandler(
             loggerMock.object,
@@ -151,7 +151,7 @@ describe("Jira Issue Message Handler Tests", () => {
 
         issueReplacerMock
             .setup((ir) => ir.replaceIssues(It.isAny(), input))
-            .returns(() => output);
+            .returns(async () => output);
 
         settingsMock
             .setup((s) => s.getValueById(SETTINGS.addAttachments))

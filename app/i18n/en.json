@@ -12,5 +12,7 @@
     "jira-link-add-attachments-label": "Add Attachments",
     "jira-link-add-attachments-description": "Add attachment if issue is attached in addition to linking them",
     "jira-link-filter-regex-label": "Jira Issue Filter Regex",
-    "jira-link-filter-regex-description": "A javascript regular expression to filter issues, which are already in a link, for example."
+    "jira-link-filter-regex-description": "A javascript regular expression to filter issues, which are already in a link, for example.",
+    "jira-link-replaceIssueIdsWithLinks-label": "Replace Issue Ids with Links",
+    "jira-link-replaceIssueIdsWithLinks-description": "If activated, jira-link replaces issues ids with a markdown styled link to the issue on your server."
 }

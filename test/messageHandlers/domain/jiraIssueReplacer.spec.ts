@@ -1,34 +1,40 @@
 // tslint:disable:no-unused-expression
 
+import { ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
 import { expect } from "chai";
 import "mocha";
+import { Mock } from "typemoq";
 import { IJiraIssue } from "../../../app/src/definition/jiraConnection";
 import {
     IFoundIssue,
 } from "../../../app/src/definition/messageHandling";
 import { IssueReplacer, replaceInTextByIndexAndLength } from "../../../app/src/messageHandlers/domain/issueReplacer";
 
-describe("Tests for issue replacement", () => {
-    it("Correct Issue should be replaced", () => {
+describe("Tests for issue replacement", async () => {
+    
+    const settingsMock = Mock.ofType<ISettingRead>();
+    const settings = settingsMock.object;
+
+    it("Correct Issue should be replaced", async () => {
         // Arrange
         const issueKey = "ISSUE-123";
         let text = `${issueKey} needs to be done immediately`;
         const issueRegex = /ISSUE-123(?=\s)/gm;
         const foundIssues = createFoundIssue({ key: issueKey, match: issueRegex.exec(text) as RegExpExecArray });
 
-        const cut = new IssueReplacer();
+        const cut = new IssueReplacer(settings);
         cut.callback = (issue: IJiraIssue) => "REPLACED!";
 
         // Act
 
-        text = cut.replaceIssues(foundIssues, text);
+        text = await cut.replaceIssues(foundIssues, text);
 
         // Assert
 
         expect(text.startsWith("REPLACED!")).to.be.equal(true);
     });
 
-    it("Not recognized issues should not be replaced", () => {
+    it("Not recognized issues should not be replaced", async () => {
         // Arrange
         const issueKey1 = "ISSUE-123";
         const issueKey2 = "ISSUE-456";
@@ -45,12 +51,12 @@ describe("Tests for issue replacement", () => {
             match: issueRegex.exec(text) as RegExpExecArray
         });
 
-        const cut = new IssueReplacer();
+        const cut = new IssueReplacer(settings);
         cut.callback = (issue: IJiraIssue) => replaced;
 
         // Act
 
-        text = cut.replaceIssues(foundIssues, text);
+        text = await cut.replaceIssues(foundIssues, text);
 
         // Assert
 

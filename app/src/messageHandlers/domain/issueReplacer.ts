@@ -1,14 +1,31 @@
+import { ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
+import { SETTINGS } from "../../configuration/configuration";
 import { IJiraIssue } from "../../definition/jiraConnection";
 import { IFoundIssue, IIssueReplacer } from "../../definition/messageHandling";
 
 export class IssueReplacer implements IIssueReplacer {
+    /**
+     *
+     */
+    constructor(private settings: ISettingRead) {}
+    public callback: (issue: IJiraIssue) => string = (issue) =>
+        `[${issue.key}](${issue.jiraLinkBrowseAddress})`;
 
-    public callback: (issue: IJiraIssue) => string = issue => `[${issue.key}](${issue.jiraLinkBrowseAddress})`;
-
-    public replaceIssues(foundIssues: Array<IFoundIssue>, text: string): string {
+    public async replaceIssues(
+        foundIssues: Array<IFoundIssue>,
+        text: string
+    ): Promise<string> {
+        if (!((await this.settings.getValueById(SETTINGS.replaceIssueIdsWithLinks)) as boolean)) {
+            return text;
+        }
 
         for (const foundIssue of foundIssues.reverse()) {
-            text = replaceInTextByIndexAndLength(text, this.callback(foundIssue.issue), foundIssue.foundMatch.index, foundIssue.foundMatch[0].length);
+            text = replaceInTextByIndexAndLength(
+                text,
+                this.callback(foundIssue.issue),
+                foundIssue.foundMatch.index,
+                foundIssue.foundMatch[0].length
+            );
         }
         return text;
     }
@@ -26,6 +43,14 @@ export class IssueReplacer implements IIssueReplacer {
  * @param {number} length The number of characters that should be covered by the replacement string
  * @return {*}  {string} The result string
  */
-export function replaceInTextByIndexAndLength(text: string, replacement: string, startIndex: number, length: number): string {
-    return text.replace(new RegExp("^(.{" + startIndex + "}).{" + length + "}", "s"), "$1" + replacement);
+export function replaceInTextByIndexAndLength(
+    text: string,
+    replacement: string,
+    startIndex: number,
+    length: number
+): string {
+    return text.replace(
+        new RegExp("^(.{" + startIndex + "}).{" + length + "}", "s"),
+        "$1" + replacement
+    );
 }

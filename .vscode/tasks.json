@@ -47,6 +47,12 @@
                 "isDefault": true
             },
             "label": "Watch Test Task"
+        },
+        {
+            "label": "coverage",
+            "type": "shell",
+            "command": "npm run coverage",
+            "problemMatcher": "$tsc-watch"
         }
     ]
 }

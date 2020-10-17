@@ -71,7 +71,7 @@ export class JiraLinkApp extends App
         const jiraConnection = await createJiraConnection(this.getLogger(), http, read.getEnvironmentReader().getSettings());
         const jiraIssueProvider = new JiraIssueProvider(jiraConnection, this.getLogger());
         const messageParser = new IssueMessageParser(jiraIssueProvider, this.getLogger(), read.getEnvironmentReader().getSettings());
-        const issueReplacer = new IssueReplacer();
+        const issueReplacer = new IssueReplacer(read.getEnvironmentReader().getSettings());
 
         return new JiraIssueMessageHandler(
             this.getLogger(),

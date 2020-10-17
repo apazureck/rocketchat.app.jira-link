@@ -1,4 +1,16 @@
 {
     "mochaExplorer.files": "test/**/*.ts",
-    "mochaExplorer.require": "ts-node/register"
+    "mochaExplorer.require": "ts-node/register",
+    "coverage-gutters.showLineCoverage": true,
+    "coverage-gutters.coverageReportFileName": "index.html",
+    "coverage-gutters.showGutterCoverage": true,
+    "coverage-gutters.highlightdark": "rgba(45, 121, 10, 0.0)",
+    "coverage-gutters.noHighlightDark": "rgba(121, 31, 10, 0.0)",
+    "coverage-gutters.partialHighlightDark": "rgba(121, 86, 10, 0.0)",
+    "triggerTaskOnSave.tasks": {
+        "coverage": [
+            "app/**/*.ts",
+            "test/**/*.ts"
+        ]
+    }
 }

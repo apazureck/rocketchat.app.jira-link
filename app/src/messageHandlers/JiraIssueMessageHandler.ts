@@ -57,7 +57,7 @@ export class JiraIssueMessageHandler {
     ): Promise<void> {
         let text = this.messageBuilder.getText();
 
-        text = this.issueReplacer.replaceIssues(foundIssues, text);
+        text = await this.issueReplacer.replaceIssues(foundIssues, text);
 
         this.messageBuilder.setText(text);
         this.messageBuilder.setParseUrls(false);

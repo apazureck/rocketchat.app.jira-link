@@ -1,4 +1,5 @@
 import { ISettingsExtend } from "@rocket.chat/apps-engine/definition/accessors";
+import { expect } from "chai";
 import "mocha";
 import { Mock } from "typemoq";
 import { extendConfiguration } from "../../app/src/configuration/configuration";
@@ -14,6 +15,5 @@ describe("Tests for configuration generation", () => {
         extendConfiguration(settingsMock.object);
 
         // Assert
-
     });
 });

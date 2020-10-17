@@ -6,6 +6,7 @@ import {
 import { SettingType } from "@rocket.chat/apps-engine/definition/settings";
 
 export class SETTINGS {
+    public static get replaceIssueIdsWithLinks(): string { return "jira-link-replaceIssueIdsWithLinks"; }
     public static get jiraServerAddress(): string { return "jira-link-server-address"; }
     public static get jiraUserName(): string { return "jira-link-username"; }
     public static get jiraPassword(): string { return "jira-link-password"; }
@@ -21,7 +22,7 @@ class SettingsDefaults {
 }
 
 const sectionConnection = "Connection Settings";
-const sectionAttachments = "Attachments";
+const sectionAttachments = "Message Settings";
 
 export function extendConfiguration(
     settings: ISettingsExtend
@@ -67,7 +68,7 @@ export function extendConfiguration(
     /// Regular Expression
     settings.provideSetting({
         id: SETTINGS.regex,
-        packageValue: SETTINGS.DEFAULTS.regex,
+        packageValue: SETTINGS.DEFAULTS.regex.source,
         public: false,
         type: SettingType.CODE,
         multiline: false,
@@ -88,6 +89,16 @@ export function extendConfiguration(
         i18nDescription: description(SETTINGS.filterRegex)
     });
 
+    settings.provideSetting({
+        id: SETTINGS.replaceIssueIdsWithLinks,
+        section: sectionAttachments,
+        packageValue: true,
+        public: false,
+        type: SettingType.BOOLEAN,
+        required: true,
+        i18nLabel: label(SETTINGS.replaceIssueIdsWithLinks),
+        i18nDescription: description(SETTINGS.replaceIssueIdsWithLinks)
+    });
     // Attachment Settings
     settings.provideSetting({
         id: SETTINGS.addAttachments,

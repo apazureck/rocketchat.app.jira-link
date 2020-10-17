@@ -37,7 +37,7 @@ export interface IJiraIssueMessageParser {
 }
 
 export interface IIssueReplacer {
-    replaceIssues(foundIssues: Array<IFoundIssue>, text: string): string;
+    replaceIssues(foundIssues: Array<IFoundIssue>, text: string): Promise<string>;
 }
 
 export const JIRA_ISSUE_ATTACHMENT_TYPE = "jira-issue-link";
