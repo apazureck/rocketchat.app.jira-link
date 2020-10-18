@@ -1,8 +1,17 @@
-import { ILogger, IMessageBuilder, ISettingRead } from "@rocket.chat/apps-engine/definition/accessors";
+import {
+    ILogger,
+    IMessageBuilder,
+    ISettingRead,
+} from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 
 import { SETTINGS } from "../configuration/configuration";
-import { IAttachmentCreator, IFoundIssue, IIssueReplacer, IJiraIssueMessageParser } from "../definition/messageHandling";
+import {
+    IAttachmentCreator,
+    IFoundIssue,
+    IIssueReplacer,
+    IJiraIssueMessageParser,
+} from "../definition/messageHandling";
 
 export class JiraIssueMessageHandler {
     private get messageText(): string | undefined {
@@ -15,7 +24,7 @@ export class JiraIssueMessageHandler {
         private messageparser: IJiraIssueMessageParser,
         private messageBuilder: IMessageBuilder,
         private issueReplacer: IIssueReplacer,
-        private attachmentCreator: IAttachmentCreator,
+        private attachmentCreator: IAttachmentCreator
     ) {}
 
     public async replaceIssuesInMessage(): Promise<IMessage> {
@@ -44,7 +53,9 @@ export class JiraIssueMessageHandler {
     }
 
     private async addAttachmentsIsActivated(): Promise<boolean> {
-        const addAttachments = await this.settings.getValueById(SETTINGS.addAttachments) as boolean;
+        const addAttachments = (await this.settings.getValueById(
+            SETTINGS.addAttachments
+        )) as boolean;
         this.logger.debug("Should add attachments", addAttachments);
         return addAttachments === true;
     }
@@ -53,8 +64,24 @@ export class JiraIssueMessageHandler {
         foundIssues: Array<IFoundIssue>,
         builder: IMessageBuilder
     ) {
-        this.logger.debug("Attachments already on message", builder.getAttachments());
-        builder.setAttachments(this.attachmentCreator.createDistinctAttachments(foundIssues));
+        this.logger.debug(
+            "Attachments already on message",
+            builder.getAttachments()
+        );
+        this.clearAttachments(builder);
+        this.addAttachments(builder, foundIssues);
+    }
+
+    private addAttachments(
+        builder: IMessageBuilder,
+        foundIssues: Array<IFoundIssue>
+    ) {
+        const attachments = this.attachmentCreator.createDistinctAttachments(
+            foundIssues
+        );
+        for (const attachment of attachments) {
+            builder.addAttachment(attachment);
+        }
     }
 
     private async createIssueLinks(
@@ -74,11 +101,14 @@ export class JiraIssueMessageHandler {
 
     private clearAttachments(builder: IMessageBuilder) {
         const toDelete: Array<number> = [];
-        builder.getAttachments().forEach((a, i) => {
-            if (a.type === "jira-link-attachment") {
-                toDelete.push(i);
-            }
-        });
+        const attachments = builder.getAttachments();
+        if (attachments) {
+            attachments.forEach((a, i) => {
+                if (a.type === "jira-link-attachment") {
+                    toDelete.push(i);
+                }
+            });
+        }
         toDelete.forEach((index) => builder.removeAttachment(index));
     }
 }

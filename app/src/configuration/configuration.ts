@@ -18,7 +18,7 @@ export class SETTINGS {
 
 class SettingsDefaults {
     public get filterRegex(): RegExp { return /(```.*?```|`.*?`)/gm; }
-    public get regex(): RegExp { return /(?:(?<issue1>\b\w+-\d+\b)|(?<issue2>\[.*?(\w+-\d+).*?\]\(.*?\1.*?\)))/gm; }
+    public get regex(): RegExp { return /(?:(?<issue1>\b\w+-\d+\b)|\[(?<issue2>\w+-\d+)\]\(.*?\1.*?\))/gm; }
 }
 
 const sectionConnection = "Connection Settings";

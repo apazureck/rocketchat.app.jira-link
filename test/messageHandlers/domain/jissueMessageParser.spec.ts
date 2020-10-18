@@ -79,7 +79,7 @@ describe("Tests for message parser", () => {
         expect(result.length).equals(3);
     });
 
-    it("Ignore Issue, which is already in hyperlink", async () => {
+    it("Replace issues already present as hyperlink", async () => {
         // Arrange
 
         const issuekey1 = "ISSUE-123";
@@ -111,7 +111,7 @@ describe("Tests for message parser", () => {
 
         // Assert
 
-        expect(result.length).equals(1);
+        expect(result.length).equals(2);
     });
 
     it("Replacement location should be correct", async () => {
@@ -146,7 +146,10 @@ describe("Tests for message parser", () => {
 
         // Assert
 
-        expect(result[0].foundMatch.index).equals(29);
+        expect(result[0].foundMatch.index).equals(0);
+        expect(result[0].foundMatch[0].length).equals(23);
+        expect(result[1].foundMatch.index).equals(29);
+        expect(result[1].foundMatch[0].length).equals(9);
     });
 
     it("No replacement in code blocks", async () => {

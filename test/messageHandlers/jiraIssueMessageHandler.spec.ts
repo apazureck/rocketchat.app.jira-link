@@ -22,6 +22,7 @@ describe("Jira Issue Message Handler Tests", () => {
     const messageBuilderMock = Mock.ofType<IMessageBuilder>();
     const issueReplacerMock = Mock.ofType<IIssueReplacer>();
     const attachmentCreatorMock = Mock.ofType<IAttachmentCreator>();
+    attachmentCreatorMock.setup(ac => ac.createDistinctAttachments(It.isAny())).returns(() => []);
 
     beforeEach(() => {
         loggerMock.reset();
