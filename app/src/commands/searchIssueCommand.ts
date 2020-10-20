@@ -1,5 +1,6 @@
 import {
     IHttp,
+    ILogger,
     IModify,
     IPersistence,
     IRead
@@ -14,7 +15,9 @@ import {
 import {
     SETTINGS
 } from "../configuration/configuration";
+import { IJiraIssueProvider, ISearchResult } from "../definition/jiraConnection";
 import { JiraConnection } from "../jiraConnection/jiraConnection";
+import { createJiraConnection } from "../jiraConnection/jiraConnectionFactory";
 import { JiraIssueProvider } from "../jiraConnection/jiraIssueProvider";
 import { ILogProvider } from "../types/ilogprovider";
 
@@ -24,58 +27,31 @@ export class SearchIssueCommand implements ISlashCommand {
     public i18nDescription = "jira-link-searchIssue-description";
     public providesPreview = true;
 
-    constructor(private log: ILogProvider) {}
+    constructor(private logger: ILogger) {}
 
     public async executor(
         context: SlashCommandContext,
-        read: IRead,
-        modify: IModify,
-        http: IHttp,
-        persis: IPersistence
     ): Promise<void> {
         throw new Error("Method not implemented.");
     }
+
     public async previewer(
         context: SlashCommandContext,
         read: IRead,
-        modify: IModify,
+        __,
         http: IHttp,
-        persis: IPersistence
     ): Promise<ISlashCommandPreview> {
-        const logger = this.log.getLogger();
         try {
-            logger.log("Searching Issues...");
-            const settings = read.getEnvironmentReader().getSettings();
+            this.logger.log("Searching Issues...");
+            this.logger.debug("Using Arguments", context.getArguments());
 
-            const jc = new JiraConnection(logger, http, {
-                serverUrl: await settings.getValueById(
-                    SETTINGS.jiraServerAddress
-                ),
-                password: await settings.getValueById(SETTINGS.jiraPassword),
-                username: await settings.getValueById(SETTINGS.jiraUserName)
-            });
-
-            const search = new JiraIssueProvider(
-                jc,
-                logger
-            );
-
-            logger.debug("Using Arguments", context.getArguments());
             const searchString = context.getArguments().join(" ");
-            const searchResult = await search.searchIssue(searchString);
+            const issueProvider = new JiraIssueProvider(await createJiraConnection(this.logger, http, read.getEnvironmentReader().getSettings()), this.logger);
+            const searchResult = await issueProvider.searchIssue(searchString);
 
-            return {
-                i18nTitle: `Found ${searchResult.total} results for`,
-                items: searchResult.issues.map(i => {
-                    return {
-                        id: i.key,
-                        type: SlashCommandPreviewItemType.TEXT,
-                        value: `[${i.key}]\n${i.fields.summary}`
-                    } as ISlashCommandPreviewItem;
-                })
-            };
+            return this.buildPreviewFromSearchResult(searchResult);
         } catch (error) {
-            logger.error(error);
+            this.logger.error(error);
             throw error;
         }
     }
@@ -88,19 +64,40 @@ export class SearchIssueCommand implements ISlashCommand {
         http: IHttp,
         persis: IPersistence
     ): Promise<void> {
-        const logger = this.log.getLogger();
         try {
-            logger.debug("Creating message for", item);
-            const newMessage = modify.getCreator().startMessage();
-            newMessage
-                .setSender(context.getSender())
-                .setRoom(context.getRoom())
-                .setThreadId(context.getThreadId() as string);
+            this.logger.debug("Creating message for", item);
 
-            newMessage.setText(item.id);
-            modify.getCreator().finish(newMessage);
+            this.putIssueIdInMessage(modify, context, item);
+
         } catch (error) {
-            logger.error("Failed creating message", error);
+            this.logger.error("Failed creating message", error);
         }
+    }
+
+    public putIssueIdInMessage(modify: IModify, context: SlashCommandContext, item: ISlashCommandPreviewItem) {
+        const creator = modify.getCreator();
+        const newMessage = creator.startMessage();
+
+        newMessage
+            .setSender(context.getSender())
+            .setRoom(context.getRoom())
+            .setThreadId(context.getThreadId() as string);
+
+        newMessage.setText(item.id);
+
+        creator.finish(newMessage);
+    }
+
+    public buildPreviewFromSearchResult(searchResult: ISearchResult): ISlashCommandPreview {
+        return {
+            i18nTitle: `Found ${searchResult.total} results for`,
+            items: searchResult.issues.map(i => {
+                return {
+                    id: i.key,
+                    type: SlashCommandPreviewItemType.TEXT,
+                    value: `[${i.key}]\n${i.fields.summary}`
+                } as ISlashCommandPreviewItem;
+            })
+        };
     }
 }

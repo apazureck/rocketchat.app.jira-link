@@ -67,7 +67,7 @@
             "label": "coverage",
             "type": "shell",
             "command": "npm run coverage",
-            "problemMatcher": "$tsc-watch"
+            "problemMatcher": "$tsc"
         }
     ]
 }

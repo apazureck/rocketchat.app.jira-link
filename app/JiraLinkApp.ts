@@ -36,7 +36,7 @@ export class JiraLinkApp extends App
         environmentRead: IEnvironmentRead
     ): Promise<void> {
         await this.extendConfiguration(configurationExtend, environmentRead);
-        await configurationExtend.slashCommands.provideSlashCommand(new SearchIssueCommand(this));
+        await configurationExtend.slashCommands.provideSlashCommand(new SearchIssueCommand(this.getLogger()));
         this.getLogger().log("Jira Link started");
     }
 
